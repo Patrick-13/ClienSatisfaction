@@ -12,7 +12,7 @@ import { IoArrowBack } from "react-icons/io5";
 
 export default function Edit({
     ratingInfo,
-    sections,
+    units,
     employees,
     transactiontypes,
     todayOfficer,
@@ -79,19 +79,16 @@ export default function Edit({
     };
     //filter section based its transaction type
     const selectedTransaction = transactiontypes.find(
-        (t) => t.id === data.transactionType
+        (t) => t.id === parseInt(data.transactionType)
     );
 
     // Filter sections under that division
-    const filteredSections = selectedTransaction
-        ? sections.filter(
-              (s) => s.division_id === selectedTransaction.division_id
-          )
+    const filteredUnits = selectedTransaction
+        ? units.filter((unit) => unit.transaction_id === selectedTransaction.id)
         : [];
-
     // 3. Filter employees by selected section (unitVisited = section_id)
     const filteredEmployees = data.unitVisited
-        ? employees.filter((emp) => emp.section_id === data.unitVisited)
+        ? employees.filter((emp) => emp.unit_id === parseInt(data.unitVisited))
         : [];
 
     //function submitting the form
@@ -615,7 +612,7 @@ export default function Edit({
                                         <SelectInput
                                             id="unitVisited"
                                             name="unitVisited"
-                                            value={data.unitVisited}
+                                            value={parseInt(data.unitVisited)}
                                             onChange={(e) =>
                                                 setData(
                                                     "unitVisited",
@@ -627,12 +624,12 @@ export default function Edit({
                                             <option value="">
                                                 Select Section
                                             </option>
-                                            {filteredSections.map((section) => (
+                                            {filteredUnits.map((unit) => (
                                                 <option
-                                                    key={section.id}
-                                                    value={section.id}
+                                                    key={unit.id}
+                                                    value={unit.id}
                                                 >
-                                                    {section.section_name}
+                                                    {unit.unit_name}
                                                 </option>
                                             ))}
                                         </SelectInput>

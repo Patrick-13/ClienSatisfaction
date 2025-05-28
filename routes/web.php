@@ -25,14 +25,15 @@ Route::get('/unauthorizedaccess', function () {
 })->name('unauthorizedaccess');
 
 //client route no validation
-Route::post('/customer', [CustomerRatingController::class, 'store'])->name('customer.store');
-Route::get('/customer/index', [CustomerRatingController::class, 'index'])->name('customer.index');
+Route::resource('/customer', CustomerRatingController::class);
+
 
 //only verified user can access this route
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard')->middleware('moduleaccess:1');
+
     Route::resource('ratingdata', RatingdataController::class)->middleware('moduleaccess:2');
 
     Route::resource('officerschedule', OfficerSchedulerController::class)->middleware('moduleaccess:3');
@@ -64,6 +65,8 @@ Route::middleware(['auth', 'superuser', 'verified'])->group(function () {
 
 Route::get('/notifications', [NotificationController::class, 'notification'])
     ->name('notification');
+
+Route::get('notifications/{clientId}', [NotificationController::class, 'show'])->name('notifications.show');
 
 
 //auth user can access this route

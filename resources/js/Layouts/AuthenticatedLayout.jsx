@@ -5,6 +5,8 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { useNotifications } from "@/Contexts/NotificationContext";
+import { formatDistanceToNow } from "date-fns";
+import { HiOutlineBell } from "react-icons/hi";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -12,11 +14,12 @@ export default function AuthenticatedLayout({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
     const [userModules, setUserModules] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const { badCount, veryBadCount, bads, veryBads } = useNotifications();
 
-    const { bad, veryBad } = useNotifications();
-
-    console.log("bad", bad);
-    console.log("very bad", veryBad);
+    const toggleTasks = () => {
+        setIsOpen(!isOpen);
+    };
 
     useEffect(() => {
         if (!user?.id) return; // Early return if user ID is not available
@@ -69,9 +72,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                         )}
                                         className="relative flex items-center space-x-2"
                                     >
-                                        <span>Client Satisfaction Data</span>
-                                        <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
-                                            {(veryBad ?? 0) + (bad ?? 0)}
+                                        {" "}
+                                        <span className="text-sm text-gray-700">
+                                            Client Satisfaction Data
                                         </span>
                                     </NavLink>
                                 )}
@@ -103,7 +106,115 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div className="hidden sm:ms-6 sm:flex sm:items-center space-x-4">
+                            <div className="relative">
+                                <button
+                                    onClick={toggleTasks}
+                                    className="relative text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
+                                >
+                                    <HiOutlineBell className="w-6 h-6" />
+                                    {(veryBadCount ?? 0) + (badCount ?? 0) >
+                                        0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                            {(veryBadCount ?? 0) +
+                                                (badCount ?? 0)}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {isOpen && (
+                                    <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 shadow-lg rounded-md z-50 p-2">
+                                        <ul className="space-y-2 max-h-60 overflow-y-auto">
+                                            {/* veryBad notifications */}
+                                            {veryBads.length === 0 &&
+                                            bads.length === 0 ? (
+                                                <li className="p-2 text-center text-gray-500 dark:text-gray-400">
+                                                    No Notifications
+                                                </li>
+                                            ) : (
+                                                <>
+                                                    {veryBads.map((item) => (
+                                                        <Link
+                                                            key={item.id}
+                                                            href={route(
+                                                                "notifications.show",
+                                                                {
+                                                                    clientId:
+                                                                        item.id,
+                                                                }
+                                                            )}
+                                                            className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                                                        >
+                                                            <div className="text-xs font-semibold">
+                                                                OD Name:{" "}
+                                                                {item.odName}
+                                                            </div>
+                                                            <div className="text-xs font-semibold text-red-500">
+                                                                Rating:{" "}
+                                                                {item.rating}
+                                                            </div>
+                                                            <div className="text-xs">
+                                                                Client:{" "}
+                                                                {
+                                                                    item.clientName
+                                                                }
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">
+                                                                {formatDistanceToNow(
+                                                                    new Date(
+                                                                        item.created_at
+                                                                    ),
+                                                                    {
+                                                                        addSuffix: true,
+                                                                    }
+                                                                )}
+                                                            </div>
+                                                        </Link>
+                                                    ))}
+                                                    {bads.map((item) => (
+                                                        <Link
+                                                            key={item.id}
+                                                            href={route(
+                                                                "notifications.show",
+                                                                {
+                                                                    clientId:
+                                                                        item.id,
+                                                                }
+                                                            )}
+                                                            className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                                                        >
+                                                            <div className="text-xs font-semibold">
+                                                                OD Name:{" "}
+                                                                {item.odName}
+                                                            </div>
+                                                            <div className="text-xs font-semibold text-orange-500">
+                                                                Rating:{" "}
+                                                                {item.rating}
+                                                            </div>
+                                                            <div className="text-xs">
+                                                                Client:{" "}
+                                                                {
+                                                                    item.clientName
+                                                                }
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">
+                                                                {formatDistanceToNow(
+                                                                    new Date(
+                                                                        item.created_at
+                                                                    ),
+                                                                    {
+                                                                        addSuffix: true,
+                                                                    }
+                                                                )}
+                                                            </div>
+                                                        </Link>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>

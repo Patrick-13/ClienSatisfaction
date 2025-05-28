@@ -11,6 +11,7 @@ use App\Models\Module;
 use App\Models\OfficerScheduler;
 use App\Models\Section;
 use App\Models\TransactionType;
+use App\Models\Unit;
 use App\Models\Usersystemlog;
 use Carbon\Carbon;
 use DateTime;
@@ -96,13 +97,14 @@ class RatingdataController extends Controller
         $sections = Section::orderBy('section_name', 'asc')->get();
         $transactiontypes = TransactionType::orderBy('transaction_name', 'asc')->get();
         $employees = Employee::orderBy('fullName', 'asc')->get();
+        $units = Unit::orderBy('unit_name', 'asc')->get();
 
 
         return inertia('CustomerRating/Edit', [
             "todayOfficer" => $todayOfficer,
             "ratingInfo" => $ratingInfo,
             'divisions' => $divisions,
-            'sections' => $sections,
+            'units' => $units,
             'transactiontypes' => $transactiontypes,
             'employees' => $employees, // Pass the employee to the view
         ]);

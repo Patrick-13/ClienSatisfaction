@@ -9,8 +9,10 @@ export const useNotifications = () => {
 
 export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState({
-        bad: 0,
-        veryBad: 0,
+        badCount: 0,
+        veryBadCount: 0,
+        bads: [],
+        veryBads: [],
     });
 
     // console.log(notifications);

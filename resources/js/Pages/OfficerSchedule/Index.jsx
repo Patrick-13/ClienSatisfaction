@@ -94,7 +94,7 @@ export default function Index({
         if (flash.message.error) {
             toast.error(flash.message.error);
         }
-    });
+    }, [flash]);
 
     return (
         <AuthenticatedLayout

@@ -54,7 +54,7 @@ class CustomerRatingController extends Controller
             ]);
         }
 
-        return redirect()->route('customer.index')->with([
+        return redirect()->route('client.index')->with([
             'success' => 'Customer Satisfaction Created Successfully!',
         ]);
     }
@@ -62,5 +62,4 @@ class CustomerRatingController extends Controller
     /**
      * Display the specified resource.
      */
-
 }
