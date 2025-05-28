@@ -26,9 +26,12 @@ class DashboardController extends Controller
         $dateTo = request()->query('dateTo');
         $sex = request()->query('sex');
         $rating = request()->query('rating');
+        $sector = request()->query('sector');
 
         $baseQuery = CustomerRating::query()->when($dateFrom && $dateTo, function ($query) use ($dateFrom, $dateTo) {
             return $query->whereBetween('date', [$dateFrom, $dateTo]);
+        })->when($sector, function ($query) use ($sector) {
+            return $query->where('sector', $sector);
         })->when($sex, function ($query) use ($sex) {
             return $query->where('sex', $sex);
         })->when($rating, function ($query) use ($rating) {
@@ -52,8 +55,20 @@ class DashboardController extends Controller
         $veryGood  = (clone $baseQuery)->where('rating', 'Good')->count();
         $Bad       = (clone $baseQuery)->where('rating', 'Bad')->count();
         $veryBad   = (clone $baseQuery)->where('rating', 'Very Bad')->count();
-        $male   = (clone $baseQuery)->where('sex', 'Male')->count();
-        $female   = (clone $baseQuery)->where('sex', 'Female')->count();
+        $male = (clone $baseQuery)
+            ->where('sex', 'Male')
+            ->select('clientName', 'date')
+            ->distinct()
+            ->get()
+            ->count();
+
+
+
+        $female = (clone $baseQuery)
+            ->where('sex', 'Female')
+            ->select('clientName', 'date')
+            ->distinct()
+            ->count('clientName');
 
         // If the request is AJAX (like from axios), return JSON
         if (request()->wantsJson()) {
@@ -106,7 +121,7 @@ class DashboardController extends Controller
             'divisions' => $divisions,
             'sections' => $sections,
             'transactiontypes' => $transactiontypes,
-             'units' => $units,
+            'units' => $units,
             'employees' => $employees,
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

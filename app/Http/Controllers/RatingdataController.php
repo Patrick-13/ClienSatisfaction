@@ -29,9 +29,12 @@ class RatingdataController extends Controller
         $dateTo = request()->query('dateTo');
         $sex = request()->query('sex');
         $rating = request()->query('rating');
+        $sector = request()->query('sector');
 
         $query = CustomerRating::query()->when($dateFrom && $dateTo, function ($query) use ($dateFrom, $dateTo) {
             return $query->whereBetween('date', [$dateFrom, $dateTo]);
+        })->when($sector, function ($query) use ($sector) {
+            return $query->where('sector', $sector);
         })->when($sex, function ($query) use ($sex) {
             return $query->where('sex', $sex);
         })->when($rating, function ($query) use ($rating) {

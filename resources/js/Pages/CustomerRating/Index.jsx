@@ -36,12 +36,14 @@ export default function Index({
     currentPageCount,
     currentPage,
 }) {
+    console.log(clientratingdatas);
     queryParams = queryParams || {};
     const [loading, setLoading] = useState(false);
     const [dateFrom, setDateFrom] = useState(queryParams.dateFrom || "");
     const [dateTo, setDateTo] = useState(queryParams.dateTo || "");
     const [sex, setSex] = useState(queryParams.sex || "");
     const [rating, setRating] = useState(queryParams.rating || "");
+    const [sector, setSector] = useState("");
 
     const searchFieldChanged = (field, value) => {
         const updatedQueryParams = { ...queryParams };
@@ -90,6 +92,7 @@ export default function Index({
                     dateTo: dateTo,
                     sex: sex,
                     rating: rating,
+                    sector: sector,
                 },
                 { responseType: "blob" }
             )
@@ -207,6 +210,40 @@ export default function Index({
                                                         }
                                                         className="w-56 text-gray-900"
                                                     />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <InputLabel
+                                                        htmlFor="sector"
+                                                        value="Filter Sector"
+                                                    />
+                                                    <SelectInput
+                                                        defaultValue={
+                                                            queryParams.sector
+                                                        }
+                                                        onChange={(e) =>
+                                                            searchFieldChanged(
+                                                                "sector",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="w-56 text-gray-900"
+                                                    >
+                                                        <option value="">
+                                                            Select Sector
+                                                        </option>
+                                                        <option value="Government">
+                                                            Government
+                                                        </option>
+                                                        <option value="Private">
+                                                            Private
+                                                        </option>
+                                                        <option value="NGO">
+                                                            NGO
+                                                        </option>
+                                                        <option value="Other">
+                                                            Other
+                                                        </option>
+                                                    </SelectInput>
                                                 </div>
 
                                                 <div className="flex flex-col">
@@ -395,6 +432,20 @@ export default function Index({
                                                         Company Name
                                                     </TableHeading>
                                                     <TableHeading
+                                                        name="unit"
+                                                        sort_field={
+                                                            queryParams.sort_field
+                                                        }
+                                                        sort_direction={
+                                                            queryParams.sort_direction
+                                                        }
+                                                        sortChanged={
+                                                            sortChanged
+                                                        }
+                                                    >
+                                                        Section/Unit
+                                                    </TableHeading>
+                                                    <TableHeading
                                                         name="timeIn"
                                                         sort_field={
                                                             queryParams.sort_field
@@ -518,6 +569,13 @@ export default function Index({
                                                                 <td className="px-3 py-2">
                                                                     {
                                                                         clientratingdata.companyName
+                                                                    }
+                                                                </td>
+                                                                <td className="px-3 py-2">
+                                                                    {
+                                                                        clientratingdata
+                                                                            .unitBy
+                                                                            ?.unit_name
                                                                     }
                                                                 </td>
                                                                 <td className="px-3 py-2">

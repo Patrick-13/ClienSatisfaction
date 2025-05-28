@@ -10,6 +10,8 @@ import {
 } from "chart.js";
 import Modal from "@/Components/Modal";
 import Ratingdatatable from "@/Modal/Ratingdatatable";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+ChartJS.register(ChartDataLabels);
 
 // Register bar chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -23,6 +25,8 @@ export default function Ratinggraphanalytics({
 }) {
     const [showModal, setShowModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
+
+    const total = excellent + veryGood + Bad + veryBad;
 
     const data = {
         labels: ["Excellent", "Good", "Bad", "Very Bad"],
@@ -41,6 +45,18 @@ export default function Ratinggraphanalytics({
         plugins: {
             legend: {
                 position: "top",
+            },
+            datalabels: {
+                anchor: "center", // Center inside the bar
+                align: "center", // Align text center
+                formatter: (value) => {
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${percentage}%`;
+                },
+                color: "#fff", // White text for contrast inside bars
+                font: {
+                    weight: "bold",
+                },
             },
         },
         scales: {

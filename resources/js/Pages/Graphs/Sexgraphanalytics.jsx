@@ -8,18 +8,22 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+ChartJS.register(ChartDataLabels);
 
 // Register bar chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function Sexgraphanalytics({ male, female }) {
+    const total = male + female;
+
     const data = {
         labels: ["Male", "Female"],
         datasets: [
             {
                 label: "Sex Distribution",
                 data: [male, female],
-                backgroundColor: ["#36A2EB", "#FF6384"],
+                backgroundColor: ["#36A2EB", "#FF6384"], // Different colors
                 borderWidth: 1,
             },
         ],
@@ -31,12 +35,24 @@ export default function Sexgraphanalytics({ male, female }) {
             legend: {
                 position: "top",
             },
+            datalabels: {
+                anchor: "center",
+                align: "center",
+                formatter: (value) => {
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${percentage}%`;
+                },
+                color: "#fff",
+                font: {
+                    weight: "bold",
+                },
+            },
         },
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    precision: 0, // ensures whole numbers
+                    precision: 0,
                 },
             },
         },
@@ -47,7 +63,7 @@ export default function Sexgraphanalytics({ male, female }) {
             <h2 className="text-lg font-semibold text-center mb-4">
                 Male vs Female
             </h2>
-            <Bar data={data} options={options} />
+            <Bar data={data} options={options} plugins={[ChartDataLabels]} />
         </div>
     );
 }

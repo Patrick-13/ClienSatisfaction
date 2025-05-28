@@ -20,6 +20,7 @@ export default function Dashboard({
     const [dateTo, setDateTo] = useState("");
     const [sex, setSex] = useState("");
     const [rating, setRating] = useState("");
+    const [sector, setSector] = useState("");
     const [stats, setStats] = useState({
         excellent,
         veryGood,
@@ -40,6 +41,7 @@ export default function Dashboard({
                         dateTo,
                         sex,
                         rating,
+                        sector,
                     }),
                     {
                         headers: {
@@ -66,7 +68,7 @@ export default function Dashboard({
         return () => {
             if (intervalId) clearInterval(intervalId); // Clear interval on cleanup
         };
-    }, [dateFrom, dateTo, sex, rating]);
+    }, [dateFrom, dateTo, sex, rating, sector]);
 
     return (
         <AuthenticatedLayout
@@ -117,7 +119,30 @@ export default function Dashboard({
                                         className="w-56 text-gray-900"
                                     />
                                 </div>
-
+                                <div className="flex flex-col">
+                                    <InputLabel
+                                        htmlFor="sector"
+                                        value="Filter Sector"
+                                    />
+                                    <SelectInput
+                                        id="sector"
+                                        value={sector}
+                                        onChange={(e) => {
+                                            const selectedSector =
+                                                e.target.value;
+                                            setSector(selectedSector);
+                                        }}
+                                        className="w-56 text-gray-900"
+                                    >
+                                        <option value="">Select Sector</option>
+                                        <option value="Government">
+                                            Government
+                                        </option>
+                                        <option value="Private">Private</option>
+                                        <option value="NGO">NGO</option>
+                                        <option value="Other">Other</option>
+                                    </SelectInput>
+                                </div>
                                 <div className="flex flex-col">
                                     <InputLabel
                                         htmlFor="sex"

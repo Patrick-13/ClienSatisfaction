@@ -28,6 +28,7 @@ class CustomerRatingResource extends JsonResource
             'timeIn' => $this->timeIn,
             'transactionType' => $this->transactionType,
             'unitVisited' => $this->unitVisited,
+            'unitBy' => new UnitResource($this->unitBy),
             'personnel' => $this->personnel,
             'rating' => $this->rating,
             'timeOut' => $this->timeOut,

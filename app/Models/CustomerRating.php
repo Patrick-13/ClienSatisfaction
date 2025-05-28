@@ -25,4 +25,9 @@ class CustomerRating extends Model
         "comments",
         "created_at",
     ];
+
+    public function unitBy()
+    {
+        return $this->belongsTo(Unit::class, 'unitVisited');
+    }
 }
