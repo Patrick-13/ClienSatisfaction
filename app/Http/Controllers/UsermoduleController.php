@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Button;
 use App\Models\Usermodule;
 use App\Models\Module;
 use App\Models\User;
@@ -57,7 +58,19 @@ class UsermoduleController extends Controller
         return response()->json($userModules);
     }
 
- 
+    public function getUserButtons($userId)
+    {
+        // Find the user or fail
+        $user = User::findOrFail($userId);
+
+        // Get the IDs of the modules the user has access to
+        $userButtons = $user->buttons()->pluck('id');
+
+        // Return the module IDs as JSON
+        return response()->json($userButtons);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -66,6 +79,7 @@ class UsermoduleController extends Controller
         //
         $users = User::all();
         $modules = Module::all();
+
 
         return inertia('Module/Create', [
             'users' => $users,
@@ -90,12 +104,14 @@ class UsermoduleController extends Controller
      */
     public function show($id)
     {
-        $user = User::with(['modules'])->findOrFail($id);
+        $user = User::with(['modules', 'buttons'])->findOrFail($id);
         $modules = Module::all();
+        $buttons = Button::all();
 
         return inertia('Module/UserShow', [
             'user' => $user,
             'modules' => $modules,
+            'buttons' => $buttons,
 
         ]);
     }
@@ -130,6 +146,8 @@ class UsermoduleController extends Controller
 
         return redirect()->route('usermodule.show', $id)->with(['success' => 'Module Access updated successfully.']);
     }
+
+
     public function updatebuttonAccess(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -145,22 +163,5 @@ class UsermoduleController extends Controller
 
 
         return redirect()->route('usermodule.show', $id)->with(['success' => 'Button Access updated successfully.']);
-    }
-
-    public function updateSubmoduleAccess(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-        // Assuming you update modules in a many-to-many relationship
-        $submodules = $request->input('submodules', []);
-
-
-        // Update the user's modules
-        $user->submodules()->sync($submodules); // This works if it's a many-to-many relationship
-
-        // Update submodules for each module
-
-
-        return redirect()->route('usermodule.show', $id)->with(['success' => 'Submodule Access updated successfully.']);
     }
 }

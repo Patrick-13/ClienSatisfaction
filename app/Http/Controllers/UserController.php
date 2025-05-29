@@ -15,4 +15,13 @@ class UserController extends Controller
 
         return response()->json($userModules);
     }
+
+    public function getUserButtons($userId)
+    {
+        $userButtons = User::findOrFail($userId)
+            ->buttons()
+            ->pluck('id'); // Remove the select to get raw IDs
+
+        return response()->json($userButtons);
+    }
 }

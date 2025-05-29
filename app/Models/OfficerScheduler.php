@@ -12,6 +12,7 @@ class OfficerScheduler extends Model
         "timeStart",
         "timeEnd",
         "email",
+        "contact_number",
         "remarks",
         "created_at",
     ];

@@ -52,9 +52,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ratingsdashboard/ratings', [DashboardController::class, 'index'])->name('ratingsdashboard.index');
 
     Route::get('/user/{userId}/modules', [UserController::class, 'getUserModules']);
+    Route::get('/user/{userId}/buttons', [UserController::class, 'getUserButtons']);
     Route::get('/user-modules', [UsermoduleController::class, 'create']);
     Route::get('/usermodule/{usermodule}/edit', [UsermoduleController::class, 'edit'])->name('usermodule.edit');
     Route::get('/user-modules', [UsermoduleController::class, 'getUserModules']);
+    Route::put('/usermodule/{id}/buttons/update-access', [UsermoduleController::class, 'updatebuttonAccess'])->name('button.updatebuttonAccess');
     Route::put('/usermodule/{id}/modules/update-access', [UsermoduleController::class, 'updateModuleAccess'])->name('usermodule.updateModuleAccess');
 });
 

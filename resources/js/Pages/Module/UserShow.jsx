@@ -5,15 +5,22 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { MdHome } from "react-icons/md";
 
-export default function UserShow({ auth, flash, user, modules }) {
+export default function UserShow({ auth, flash, user, modules, buttons }) {
     // State for selected modules
-    console.log(modules);
+    console.log(buttons);
     const [selectedModules, setSelectedModules] = useState(new Set());
+    const [selectedButtons, setSelectedButtons] = useState(new Set());
 
     useEffect(() => {
         // Initialize selected modules based on user data
         const userModules = new Set(user.modules.map((module) => module.id));
         setSelectedModules(userModules);
+    }, [user]);
+
+    useEffect(() => {
+        // Initialize selected modules based on user data
+        const userButtons = new Set(user.buttons.map((button) => button.id));
+        setSelectedButtons(userButtons);
     }, [user]);
 
     // Handle module selection
@@ -31,6 +38,20 @@ export default function UserShow({ auth, flash, user, modules }) {
         });
     };
 
+    const handleButtonChange = (buttonId) => {
+        setSelectedButtons((prev) => {
+            const updatedButtons = new Set(prev);
+            if (updatedButtons.has(buttonId)) {
+                updatedButtons.delete(buttonId);
+            } else {
+                updatedButtons.add(buttonId);
+            }
+            // Update access with selected modules only
+            updatebuttonAccess(user.id, Array.from(updatedButtons));
+            return updatedButtons;
+        });
+    };
+
     const updateModuleAccess = (usermoduleId, modulesArray) => {
         router.put(
             route("usermodule.updateModuleAccess", { id: usermoduleId }),
@@ -38,6 +59,13 @@ export default function UserShow({ auth, flash, user, modules }) {
                 modules: modulesArray,
             }
         );
+    };
+
+    // Update access buttons method
+    const updatebuttonAccess = (userbuttonId, buttonsArray) => {
+        router.put(route("button.updatebuttonAccess", { id: userbuttonId }), {
+            buttons: buttonsArray,
+        });
     };
 
     useEffect(() => {
@@ -86,34 +114,60 @@ export default function UserShow({ auth, flash, user, modules }) {
                                 </thead>
                                 <tbody>
                                     {modules.map((module) => (
-                                        <React.Fragment>
-                                            {/* Module Row */}
-                                            <tr
-                                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                                                key={module.id}
-                                            >
-                                                <td className="px-3 py-2">
-                                                    {module.name}
-                                                </td>
-                                                <td className="px-3 py-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedModules.has(
+                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <td className="px-3 py-2">
+                                                {module.name}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedModules.has(
+                                                        module.id
+                                                    )}
+                                                    onChange={() =>
+                                                        handleModuleChange(
                                                             module.id
-                                                        )}
-                                                        onChange={() =>
-                                                            handleModuleChange(
-                                                                module.id
-                                                            )
-                                                        }
-                                                    />
-                                                </td>
-                                            </tr>
-                                        </React.Fragment>
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                        </tr>
                                     ))}
                                 </tbody>
                             </table>
-
+                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
+                                    <tr>
+                                        <th className="px-3 py-2">Button</th>
+                                        <th className="px-3 py-2">Access</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {buttons.map((button) => (
+                                        <tr
+                                            key={button.id}
+                                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                        >
+                                            <td className="px-3 py-2">
+                                                {button.button_name}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedButtons.has(
+                                                        button.id
+                                                    )}
+                                                    onChange={() =>
+                                                        handleButtonChange(
+                                                            button.id
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>{" "}
                             <div className="mt-4">
                                 <Link
                                     href={route("usermodule.index")}

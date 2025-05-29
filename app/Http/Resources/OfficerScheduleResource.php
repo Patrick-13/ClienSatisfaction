@@ -22,6 +22,7 @@ class OfficerScheduleResource extends JsonResource
             'timeStart' => $this->timeStart,
             'timeEnd' => $this->timeEnd,
             'email' => $this->email,
+            'contact_number' => $this->contact_number,
             'remarks' => $this->remarks
         ];
     }

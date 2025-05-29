@@ -44,6 +44,35 @@ export default function Index({
     const [sex, setSex] = useState(queryParams.sex || "");
     const [rating, setRating] = useState(queryParams.rating || "");
     const [sector, setSector] = useState("");
+    const [userButtons, setUserButtons] = useState([]);
+
+    useEffect(() => {
+        if (!auth?.user?.id) return; // Early return if user ID is not available
+
+        const userId = auth.user.id; // Extract user ID from auth object
+
+        // Fetch user modules and submodules in parallel only if there are updates
+        const fetchData = async () => {
+            try {
+                // Make the two requests in parallel
+                const [buttonResponse] = await Promise.all([
+                    axios.get(`/user/${userId}/buttons`),
+                ]);
+
+                // Update the state with the new data
+                setUserButtons(buttonResponse.data);
+            } catch (error) {
+                console.error(
+                    "There was an error fetching the user data!",
+                    error
+                );
+            }
+        };
+
+        fetchData(); // Call the fetch function
+    }, [auth?.user?.id]);
+
+    const hasButton = (buttonId) => userButtons.includes(Number(buttonId));
 
     const searchFieldChanged = (field, value) => {
         const updatedQueryParams = { ...queryParams };
@@ -311,17 +340,21 @@ export default function Index({
                                                 </div>
 
                                                 <div className="flex items-end">
-                                                    <button
-                                                        onClick={
-                                                            handleExportCsv
-                                                        }
-                                                        className="bg-green-500 py-2 px-4 text-white rounded shadow transition-all hover:bg-green-600 flex items-center gap-1"
-                                                    >
-                                                        <BsFiletypeCsv
-                                                            size={18}
-                                                        />
-                                                        <span>Extract CSV</span>
-                                                    </button>
+                                                    {hasButton(6) && (
+                                                        <button
+                                                            onClick={
+                                                                handleExportCsv
+                                                            }
+                                                            className="bg-green-500 py-2 px-4 text-white rounded shadow transition-all hover:bg-green-600 flex items-center gap-1"
+                                                        >
+                                                            <BsFiletypeCsv
+                                                                size={18}
+                                                            />
+                                                            <span>
+                                                                Extract CSV
+                                                            </span>
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -673,37 +706,45 @@ export default function Index({
                                                                     </span>
                                                                 </td>
                                                                 <td className="px-3 py-2 flex text-nowrap">
-                                                                    <Link
-                                                                        href={route(
-                                                                            "ratingdata.edit",
-                                                                            clientratingdata.id
-                                                                        )}
-                                                                        className="font-medium text-blue dark:text-blue-500 hover:underline mx-1"
-                                                                    >
-                                                                        <FaPencilAlt
-                                                                            className="text-green-500"
-                                                                            size={
-                                                                                18
+                                                                    {hasButton(
+                                                                        2
+                                                                    ) && (
+                                                                        <Link
+                                                                            href={route(
+                                                                                "ratingdata.edit",
+                                                                                clientratingdata.id
+                                                                            )}
+                                                                            className="font-medium text-blue dark:text-blue-500 hover:underline mx-1"
+                                                                        >
+                                                                            <FaPencilAlt
+                                                                                className="text-green-500"
+                                                                                size={
+                                                                                    18
+                                                                                }
+                                                                            />
+                                                                        </Link>
+                                                                    )}
+                                                                    {hasButton(
+                                                                        3
+                                                                    ) && (
+                                                                        <button
+                                                                            onClick={(
+                                                                                e
+                                                                            ) =>
+                                                                                deleteRatingInfo(
+                                                                                    clientratingdata
+                                                                                )
                                                                             }
-                                                                        />
-                                                                    </Link>
-                                                                    <button
-                                                                        onClick={(
-                                                                            e
-                                                                        ) =>
-                                                                            deleteRatingInfo(
-                                                                                clientratingdata
-                                                                            )
-                                                                        }
-                                                                        className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
-                                                                    >
-                                                                        <FaTrashAlt
-                                                                            className="text-red-600"
-                                                                            size={
-                                                                                18
-                                                                            }
-                                                                        />
-                                                                    </button>
+                                                                            className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
+                                                                        >
+                                                                            <FaTrashAlt
+                                                                                className="text-red-600"
+                                                                                size={
+                                                                                    18
+                                                                                }
+                                                                            />
+                                                                        </button>
+                                                                    )}
                                                                 </td>
                                                                 <td className="px-3 py-2 flex text-nowrap"></td>
                                                             </tr>

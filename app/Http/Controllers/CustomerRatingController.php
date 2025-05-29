@@ -6,6 +6,8 @@ use App\Models\CustomerRating;
 use App\Http\Requests\StoreCustomerRatingRequest;
 use App\Http\Requests\UpdateCustomerRatingRequest;
 use App\Http\Resources\CustomerRatingResource;
+// use App\Services\TwilioService;
+use App\Services\MoceanService;
 
 class CustomerRatingController extends Controller
 {
@@ -28,7 +30,7 @@ class CustomerRatingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCustomerRatingRequest $request)
+    public function store(StoreCustomerRatingRequest $request, MoceanService $mocean)
     {
         $validated = $request->validated();
 
@@ -53,6 +55,12 @@ class CustomerRatingController extends Controller
                 'rating' => $rating['rating'],
             ]);
         }
+
+        // $number = preg_replace('/^0/', '+63', $validated['contactNumber']);
+        // $twilio->sendSms($validated['contactNumber'], 'Hello from Laravel + Twilio!');
+
+        $mocean->sendSms($validated['contactNumber'], 'Good Day, This is to inform you that you were the OD tomorrow, Thanks!');
+
 
         return redirect()->route('client.index')->with([
             'success' => 'Customer Satisfaction Created Successfully!',

@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Module::class, 'usermodules', 'user_id', 'module_id');
     }
+
+    public function buttons()
+    {
+        return $this->belongsToMany(Button::class, 'userbuttons', 'user_id', 'button_id');
+    }
 }

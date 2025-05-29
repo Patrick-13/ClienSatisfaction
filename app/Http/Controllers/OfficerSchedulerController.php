@@ -35,9 +35,6 @@ class OfficerSchedulerController extends Controller
 
         $schedule = $request->validated();
 
-        // Mail::to($request->email)
-        //     ->send(new OfficerSchedulerMailer($schedule));
-
         OfficerScheduler::create($schedule);
 
         return to_route('officerschedule.index')->with(['success' => 'Officer Schedule Successfully created!']);

@@ -27,6 +27,7 @@ class StoreOfficerSchedulerRequest extends FormRequest
             "timeStart" => ['required', 'date_format:H:i'],
             "timeEnd" => ['required', 'date_format:H:i', 'after:timeStart'],
             "email" => ['required', 'email'],
+            "contact_number" => ['required', 'string', "max:255"],
             "remarks" => ['required', 'string', 'max:255'],
         ];
     }

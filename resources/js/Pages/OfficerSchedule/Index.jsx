@@ -40,6 +40,35 @@ export default function Index({
     const [loading, setLoading] = useState(false);
     const [showModalImport, setShowModalImport] = useState(false);
     const [showProgressModal, setShowProgressModal] = useState(false);
+    const [userButtons, setUserButtons] = useState([]);
+
+    useEffect(() => {
+        if (!auth?.user?.id) return; // Early return if user ID is not available
+
+        const userId = auth.user.id; // Extract user ID from auth object
+
+        // Fetch user modules and submodules in parallel only if there are updates
+        const fetchData = async () => {
+            try {
+                // Make the two requests in parallel
+                const [buttonResponse] = await Promise.all([
+                    axios.get(`/user/${userId}/buttons`),
+                ]);
+
+                // Update the state with the new data
+                setUserButtons(buttonResponse.data);
+            } catch (error) {
+                console.error(
+                    "There was an error fetching the user data!",
+                    error
+                );
+            }
+        };
+
+        fetchData(); // Call the fetch function
+    }, [auth?.user?.id]);
+
+    const hasButton = (buttonId) => userButtons.includes(Number(buttonId));
 
     const events = useMemo(() => {
         if (!officerschedules || !officerschedules.data) return [];
@@ -128,33 +157,41 @@ export default function Index({
                                 <div className="relative flex flex-col gap-4 mb-5">
                                     <div className="flex justify-between items-center gap-4">
                                         <div className="relative flex items-center gap-2">
-                                            <button
-                                                onClick={() =>
-                                                    setShowModal(true)
-                                                } // Open modal on click
-                                                className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600 flex items-center gap-1"
-                                            >
-                                                <FaPlus size={16} />
-                                                <span>Create Schedule</span>
-                                            </button>
-
-                                            <button
-                                                onClick={() =>
-                                                    setShowModalImport(true)
-                                                } // Open modal on click
-                                                className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-blue-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-blue-600 flex items-center gap-1"
-                                            >
-                                                <AiOutlineUpload size={16} />
-                                                <span>Import Csv</span>
-                                            </button>
-
-                                            <button
-                                                onClick={handleExportCsv} // Open modal on click
-                                                className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-emerald-700 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-900 flex items-center gap-1"
-                                            >
-                                                <AiOutlineDownload size={16} />
-                                                <span>Download Csv</span>
-                                            </button>
+                                            {hasButton(1) && (
+                                                <button
+                                                    onClick={() =>
+                                                        setShowModal(true)
+                                                    } // Open modal on click
+                                                    className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600 flex items-center gap-1"
+                                                >
+                                                    <FaPlus size={16} />
+                                                    <span>Create Schedule</span>
+                                                </button>
+                                            )}
+                                            {hasButton(5) && (
+                                                <button
+                                                    onClick={() =>
+                                                        setShowModalImport(true)
+                                                    } // Open modal on click
+                                                    className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-blue-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-blue-600 flex items-center gap-1"
+                                                >
+                                                    <AiOutlineUpload
+                                                        size={16}
+                                                    />
+                                                    <span>Import Csv</span>
+                                                </button>
+                                            )}
+                                            {hasButton(6) && (
+                                                <button
+                                                    onClick={handleExportCsv} // Open modal on click
+                                                    className="max-w-9xl mx-auto sm:px-6 lg:px-8 bg-emerald-700 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-900 flex items-center gap-1"
+                                                >
+                                                    <AiOutlineDownload
+                                                        size={16}
+                                                    />
+                                                    <span>Download Csv</span>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
