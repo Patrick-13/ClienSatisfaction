@@ -34,7 +34,7 @@ class CustomerRatingController extends Controller
     {
         $validated = $request->validated();
 
-        foreach ($validated['ratings'] as $rating) {
+        foreach ($validated['ratings'] as $index => $rating) {
             CustomerRating::create([
                 'odName' => $validated['odName'],
                 'date' => $validated['date'],
@@ -53,13 +53,13 @@ class CustomerRatingController extends Controller
                 'unitVisited' => $rating['unitVisited'],
                 'personnel' => $rating['personnel'],
                 'rating' => $rating['rating'],
+                'rating_order' => $index + 1,
             ]);
         }
 
         // $number = preg_replace('/^0/', '+63', $validated['contactNumber']);
         // $twilio->sendSms($validated['contactNumber'], 'Hello from Laravel + Twilio!');
-
-        $mocean->sendSms($validated['contactNumber'], 'Good Day, This is to inform you that you were the OD tomorrow, Thanks!');
+        // $mocean->sendSms($validated['contactNumber'], 'Good Day, This is to inform you that you were the OD tomorrow, Thanks!');
 
 
         return redirect()->route('client.index')->with([

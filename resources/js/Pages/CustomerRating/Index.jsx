@@ -168,6 +168,13 @@ export default function Index({
         router.delete(route("ratingdata.destroy", clientratingdata.id));
     };
 
+    function formatOrder(order) {
+        const suffixes = ["th", "st", "nd", "rd"];
+        const v = order % 100;
+        const suffix = suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0];
+        return `${order}${suffix} transaction`;
+    }
+
     useEffect(() => {
         if (flash.message.success) {
             toast.success(flash.message.success);
@@ -508,6 +515,20 @@ export default function Index({
                                                     </TableHeading>
                                                     <th>Total Time Process</th>
                                                     <TableHeading
+                                                        name="rating_order"
+                                                        sort_field={
+                                                            queryParams.sort_field
+                                                        }
+                                                        sort_direction={
+                                                            queryParams.sort_direction
+                                                        }
+                                                        sortChanged={
+                                                            sortChanged
+                                                        }
+                                                    >
+                                                        Transaction Order
+                                                    </TableHeading>
+                                                    <TableHeading
                                                         name="rating"
                                                         sort_field={
                                                             queryParams.sort_field
@@ -653,6 +674,12 @@ export default function Index({
                                                                         return `${hours}h ${minutes}m`;
                                                                     })()}
                                                                 </td>
+                                                                <td className="px-3 py-2">
+                                                                    {formatOrder(
+                                                                        clientratingdata.rating_order
+                                                                    )}
+                                                                </td>
+
                                                                 <td>
                                                                     {clientratingdata.rating ===
                                                                     "Very Bad" ? (

@@ -23,6 +23,7 @@ class CustomerRating extends Model
         "rating",
         "timeOut",
         "comments",
+        "rating_order",
         "created_at",
     ];
 

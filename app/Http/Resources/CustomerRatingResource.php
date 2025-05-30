@@ -32,7 +32,8 @@ class CustomerRatingResource extends JsonResource
             'personnel' => $this->personnel,
             'rating' => $this->rating,
             'timeOut' => $this->timeOut,
-            'comments' => $this->comments
+            'comments' => $this->comments,
+            'rating_order' => $this->rating_order
         ];
     }
 }

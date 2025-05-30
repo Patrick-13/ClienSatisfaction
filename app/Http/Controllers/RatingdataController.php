@@ -45,7 +45,6 @@ class RatingdataController extends Controller
         $sortDirection = request("sort_direction", "desc");
 
         $clientratingdatas = $query->orderBy($sortField, $sortDirection)->paginate(10)->onEachSide(1);
-
         $clientratingdatas->appends(request()->only(['dateFrom', 'dateTo', 'sex', 'status', 'sort_field', 'sort_direction']));
 
         $totalCount = $clientratingdatas->total();
@@ -54,8 +53,6 @@ class RatingdataController extends Controller
         $currentPageCount = $clientratingdatas->count();
         $currentPage = $clientratingdatas->currentPage();
 
-
-
         return inertia("CustomerRating/Index", [
             "clientratingdatas" => CustomerRatingResource::collection($clientratingdatas),
             'queryParams' => request()->query() ?: null,
@@ -63,13 +60,8 @@ class RatingdataController extends Controller
             'totalCount' => $totalCount,
             'currentPageCount' => $currentPageCount,
             'currentPage' => $currentPage,
-
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
 
 
     /**
@@ -77,7 +69,6 @@ class RatingdataController extends Controller
      */
     public function show($ratingCategory)
     {
-
         $ratingInfo = CustomerRating::where('rating', $ratingCategory)->get();
 
         return response()->json($ratingInfo); // ✅ Must be JSON
@@ -107,6 +98,7 @@ class RatingdataController extends Controller
             "todayOfficer" => $todayOfficer,
             "ratingInfo" => $ratingInfo,
             'divisions' => $divisions,
+            'sections' => $sections,
             'units' => $units,
             'transactiontypes' => $transactiontypes,
             'employees' => $employees, // Pass the employee to the view
@@ -149,7 +141,7 @@ class RatingdataController extends Controller
             }
         }
 
-        // Get the purchased_no (PO number) from the updated data
+
         $clientName = $customerRating->clientName;
 
         $activity = [
@@ -177,17 +169,17 @@ class RatingdataController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($clientId)
+    public function destroy(CustomerRating $customerRating)
     {
-        $customerRating = CustomerRating::findOrFail($clientId);
         $companyName = $customerRating->companyName;
         $customerRating->delete();
         return to_route('ratingdata.index')->with(['success', "Client Info \"$companyName\" deleted Successfully!"]);
     }
 
+
+
     public function export_csv(Request $request)
     {
-        // Initialize query
         $query = CustomerRating::query();
 
         // Filter by date
@@ -242,8 +234,20 @@ class RatingdataController extends Controller
             'Section',
             'Personnel',
             'Rating',
+            'Transaction Order',
             'Comments/Suggestions',
         ];
+
+        function formatOrder($order)
+        {
+            $suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
+            if (($order % 100) >= 11 && ($order % 100) <= 13) {
+                $suffix = 'th';
+            } else {
+                $suffix = $suffixes[$order % 10];
+            }
+            return $order . $suffix . ' transaction';
+        }
 
 
         $callback = function () use ($data, $columns, $request) {
@@ -263,6 +267,16 @@ class RatingdataController extends Controller
                     $interval->s
                 );
 
+                $transaction = TransactionType::where('id', $row->transactionType)->first();
+                $transactionName = $transaction ? $transaction->transaction_name : null;
+
+                $unitvisited = Unit::where('id', $row->unitVisited)->first();
+                $unitName = $unitvisited ? $unitvisited->unit_name : null;
+
+                $personnelId = Employee::where('id', $row->personnel)->first();
+                $personnelName = $personnelId ? $personnelId->fullName : null;
+
+
                 $rowData = [
                     $row->odName,
                     $row->date,
@@ -276,10 +290,11 @@ class RatingdataController extends Controller
                     $row->timeIn,
                     $row->timeOut,
                     $duration,
-                    $row->transactionType,
-                    $row->unitVisited,
-                    $row->personnel,
+                    $transactionName,
+                    $unitName,
+                    $personnelName,
                     $row->rating,
+                    formatOrder($row->rating_order),
                     $row->comments,
                 ];
                 fputcsv($file, $rowData);
