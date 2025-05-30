@@ -270,6 +270,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 User System Logs
                                             </Dropdown.Link>
                                         )}
+
+                                        {hasModule(6) && (
+                                            <Dropdown.Link
+                                                href={route(
+                                                    "userloginlog.index"
+                                                )}
+                                            >
+                                                User Login Logs
+                                            </Dropdown.Link>
+                                        )}
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>

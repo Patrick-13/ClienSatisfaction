@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LoginlogController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfficerSchedulerController;
 use App\Http\Controllers\ProfileController;
@@ -40,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/officerschedule/import/csv', [OfficerSchedulerController::class, 'import_csv']);
 
     Route::resource('usersystemlog', UsersystemlogController::class)->middleware('moduleaccess:6');
+    Route::resource('userloginlog', LoginlogController::class)->middleware('superuser');
 
     Route::resource('employee', EmployeeController::class)->middleware('moduleaccess:5');
     Route::get('/employee/{emploeeId}/edit', [EmployeeController::class, 'edit']);
