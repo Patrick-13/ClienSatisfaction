@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('customer_ratings', function (Blueprint $table) {
             $table->id();
             $table->string('odName');
+            $table->string('appointmentNumber');
             $table->date('date');
             $table->string('clientName');
             $table->string('sex');

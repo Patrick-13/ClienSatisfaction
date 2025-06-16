@@ -6,20 +6,12 @@ use App\Models\CustomerRating;
 use App\Http\Requests\StoreCustomerRatingRequest;
 use App\Http\Requests\UpdateCustomerRatingRequest;
 use App\Http\Resources\CustomerRatingResource;
+use App\Models\Appointment;
 // use App\Services\TwilioService;
 use App\Services\MoceanService;
 
 class CustomerRatingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return inertia("Client", [
-            'success' => session('success'),
-        ]);
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -37,6 +29,7 @@ class CustomerRatingController extends Controller
         foreach ($validated['ratings'] as $index => $rating) {
             CustomerRating::create([
                 'odName' => $validated['odName'],
+                'appointmentNumber' => $validated['appointmentNumber'],
                 'date' => $validated['date'],
                 'clientName' => $validated['clientName'],
                 'sex' => $validated['sex'],
@@ -45,7 +38,7 @@ class CustomerRatingController extends Controller
                 'address' => $validated['address'],
                 'contactNumber' => $validated['contactNumber'],
                 'email' => $validated['email'],
-                'comments' => $validated['comments'],
+
                 // Rating-specific fields
                 'timeIn' => $rating['timeIn'],
                 'timeOut' => $rating['timeOut'],
@@ -53,6 +46,7 @@ class CustomerRatingController extends Controller
                 'unitVisited' => $rating['unitVisited'],
                 'personnel' => $rating['personnel'],
                 'rating' => $rating['rating'],
+                'comments' => $rating['comments'],
                 'rating_order' => $index + 1,
             ]);
         }
@@ -70,4 +64,15 @@ class CustomerRatingController extends Controller
     /**
      * Display the specified resource.
      */
+
+    public function show($appointmentNumber)
+    {
+        $appointment = Appointment::where('appointmentNumber', $appointmentNumber)->first();
+
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+
+        return response()->json($appointment);
+    }
 }

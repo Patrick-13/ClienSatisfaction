@@ -25,6 +25,7 @@ class StoreCustomerRatingRequest extends FormRequest
     {
         return [
             "odName" => ['required', 'string', 'max:255'],
+            "appointmentNumber" => ['required', 'string', 'max:255'],
             "date" => ['required', 'max:255'],
             "clientName" => ['required', 'string', 'max:255'],
             "sex" => ['required', Rule::in(['Male', 'Female'])],
@@ -38,9 +39,10 @@ class StoreCustomerRatingRequest extends FormRequest
             "ratings.*.timeOut" => ['required', 'string', 'max:255'],
             "ratings.*.transactionType" => ['required', 'integer', 'max:255'],
             "ratings.*.unitVisited" => ['required', 'integer', 'max:255'],
-            "ratings.*.personnel" => ['required', 'integer', 'max:255'],
+            "ratings.*.personnel" => ['nullable', 'integer', 'max:255'],
             "ratings.*.rating" => ['required', Rule::in(['Excellent', 'Good', 'Bad', 'Very Bad'])],
-            "comments" => ['required', 'max:255'],
+            "ratings.*.comments" => ['required', 'string', 'min:1', 'max:100', 'regex:/^(?!\s*$)[a-zA-Z\s]+$/'],
+
         ];
     }
 }

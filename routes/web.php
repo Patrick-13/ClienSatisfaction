@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\UsersystemlogController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-
+// Route::get('/', [DashboardController::class, 'landingpage']);
 Route::get('/', [DashboardController::class, 'clientindex'])->name('client.index');
 
 Route::get('/superuseraccess', function () {
@@ -28,6 +29,9 @@ Route::get('/unauthorizedaccess', function () {
 //client route no validation
 Route::resource('/customer', CustomerRatingController::class);
 
+Route::resource('clientappointment', AppointmentController::class);
+Route::get('/appointment', [AppointmentController::class, 'index_appointment']);
+Route::get('/clientappointment/{appointmentnumber}/exists', [AppointmentController::class, 'checkAppointmentNumberExists']);
 
 //only verified user can access this route
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -36,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard')->middleware('moduleaccess:1');
 
     Route::resource('ratingdata', RatingdataController::class)->middleware('moduleaccess:2');
+    Route::get('/ratingdata/quarterly-ratings', [RatingdataController::class, 'quarterlyRatings']);
+    Route::post('/appointment/export/pdf', [AppointmentController::class, 'export_pdf']);
 
     Route::resource('officerschedule', OfficerSchedulerController::class)->middleware('moduleaccess:3');
     Route::post('/officerschedule/import/csv', [OfficerSchedulerController::class, 'import_csv']);
@@ -43,10 +49,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('usersystemlog', UsersystemlogController::class)->middleware('moduleaccess:6');
     Route::resource('userloginlog', LoginlogController::class)->middleware('superuser');
 
+
     Route::resource('employee', EmployeeController::class)->middleware('moduleaccess:5');
     Route::get('/employee/{emploeeId}/edit', [EmployeeController::class, 'edit']);
     Route::get('/employee/create/import', [EmployeeController::class, 'import'])->name('employee.import');
     Route::post('/employee/import/csv', [EmployeeController::class, 'import_employee']);
+
+
+
 
     Route::post('/ratingdata/export/csv', [RatingdataController::class, 'export_csv']);
     Route::post('/officerschedule/export/csv', [OfficerSchedulerController::class, 'export_csv']);

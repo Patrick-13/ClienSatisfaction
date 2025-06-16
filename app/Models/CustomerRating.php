@@ -8,6 +8,7 @@ class CustomerRating extends Model
 {
     protected $fillable = [
         "odName",
+        "appointmentNumber",
         "date",
         "clientName",
         "sex",

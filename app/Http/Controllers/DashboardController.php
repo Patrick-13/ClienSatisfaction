@@ -98,6 +98,25 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function quarterlyRatings()
+    {
+        $quarterly = CustomerRating::query()
+            ->selectRaw("
+    CONCAT('Q', QUARTER(date), ' ', YEAR(date)) as quarter,
+    SUM(CASE WHEN rating = 'Excellent' THEN 1 ELSE 0 END) as excellent,
+    SUM(CASE WHEN rating = 'Good' THEN 1 ELSE 0 END) as good,
+    SUM(CASE WHEN rating = 'Bad' THEN 1 ELSE 0 END) as bad,
+    SUM(CASE WHEN rating = 'Very Bad' THEN 1 ELSE 0 END) as very_bad
+")
+            ->groupByRaw("YEAR(date), QUARTER(date)")
+            ->orderByRaw("YEAR(date), QUARTER(date)")
+            ->get();
+
+
+        return response()->json($quarterly);
+    }
+
+
 
     public function clientindex()
     {
@@ -128,5 +147,9 @@ class DashboardController extends Controller
             'laravelVersion' => \Illuminate\Foundation\Application::VERSION,
             'phpVersion' => PHP_VERSION,
         ]);
+    }
+
+    public function landingpage(){
+        return Inertia::render('LandingPage');
     }
 }

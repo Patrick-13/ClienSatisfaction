@@ -7,6 +7,7 @@ import TextInput from "@/Components/TextInput";
 import SelectInput from "@/Components/SelectInput";
 import Sexgraphanalytics from "./Graphs/Sexgraphanalytics";
 import Ratinggraphanalytics from "./Graphs/Ratinggraphanalytics";
+import QuarterlyRatinganalytics from "./Graphs/QuarterlyRatinganalytics";
 
 export default function Dashboard({
     excellent,
@@ -206,7 +207,9 @@ export default function Dashboard({
                                         veryBad={stats.veryBad}
                                     />
                                 </div>
-                                <div className="bg-white shadow-md rounded-lg p-6"></div>
+                                <div className="bg-white shadow-md rounded-lg p-6">
+                                    <QuarterlyRatinganalytics />
+                                </div>
                             </div>
                         </div>
                     </div>

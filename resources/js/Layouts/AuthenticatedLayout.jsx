@@ -104,6 +104,19 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </NavLink>
                                 )}
                             </div>
+
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                {hasModule(7) && (
+                                    <NavLink
+                                        href={route("clientappointment.index")}
+                                        active={route().current(
+                                            "clientappointment.index"
+                                        )}
+                                    >
+                                        Appointment Data
+                                    </NavLink>
+                                )}
+                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center space-x-4">

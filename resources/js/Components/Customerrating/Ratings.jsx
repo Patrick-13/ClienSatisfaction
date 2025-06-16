@@ -4,40 +4,30 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import Checkbox from "@/Components/Checkbox";
+import TextAreaInput from "@/Components/TextAreaInput";
+import { useState } from "react";
 
 export default function Ratings({
     data,
     errors,
     setData,
-    sections,
     employees,
     transactiontypes,
     units,
 }) {
+    console.log(employees);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [pendingRating, setPendingRating] = useState(null);
+
     const selectedRating = data.rating;
     //checkbox rating handler
     const handleRatingChange = (value) => {
-        const isNegativeRating = value;
-
-        if (isNegativeRating === "Bad") {
-            const confirmed = window.confirm(
-                "Are you sure you want to rate this as Bad?"
-            );
-            if (!confirmed) {
-                return; // user canceled, don't change the rating
-            }
+        if (value === "Bad" || value === "Very Bad") {
+            setPendingRating(value);
+            setShowConfirmModal(true);
+            return;
         }
 
-        if (isNegativeRating === "Very Bad") {
-            const confirmed = window.confirm(
-                "Are you sure you want to rate this as Very Bad?"
-            );
-            if (!confirmed) {
-                return; // user canceled, don't change the rating
-            }
-        }
-
-        // Toggle the rating (deselect if it's already selected)
         setData("rating", selectedRating === value ? "" : value);
     };
 
@@ -161,7 +151,6 @@ export default function Ratings({
             {/* Personnel Handling Transaction */}
             <div className="mt-4">
                 <div className="flex items-center gap-1">
-                    <span className="text-sm text-red-600">*</span>
                     <InputLabel htmlFor="personnel" value="Personnel" />
                 </div>
                 <SelectInput
@@ -238,6 +227,84 @@ export default function Ratings({
 
                 <InputError message={errors.rating} className="mt-2" />
             </div>
+            {/* Comments and Suggestions */}
+            <div className="mt-4">
+                <div className="flex items-center gap-1">
+                    <span className="text-sm text-red-600">*</span>
+                    <InputLabel
+                        htmlFor="comments"
+                        value="Comments/Suggestions"
+                    />
+                </div>
+
+                <TextAreaInput
+                    id="comments"
+                    value={data.comments}
+                    onChange={(e) => setData("comments", e.target.value)}
+                    maxLength={100} // <-- limit to 200 characters
+                    rows="4"
+                    className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
+                    isFocused={true}
+                />
+
+                {/* Live Character Counter */}
+                <div
+                    className={`text-sm mt-1 ${
+                        data.comments && data.comments.length >= 100
+                            ? "text-red-600"
+                            : "text-gray-500"
+                    }`}
+                >
+                    {data.comments && data.comments.length} / 100 characters
+                </div>
+                {data.comments &&
+                    !/^(?!\s*$)[a-zA-Z\s]+$/.test(data.comments) && (
+                        <div className="text-sm text-red-600 mt-1">
+                            Only letters and spaces are allowed. No symbols or
+                            all spaces.
+                        </div>
+                    )}
+
+                <InputError message={errors.comments} className="mt-2" />
+            </div>
+
+            {showConfirmModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded shadow-md text-center max-w-sm">
+                        <img
+                            src="/sad.gif"
+                            alt="Sad GIF"
+                            className="w-32 mx-auto mb-4"
+                        />
+                        <p className="text-lg font-semibold mb-4">
+                            Are you sure you want to rate this as{" "}
+                            {pendingRating}?
+                        </p>
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                onClick={() => {
+                                    setData(
+                                        "rating",
+                                        selectedRating === pendingRating
+                                            ? ""
+                                            : pendingRating
+                                    );
+                                    setShowConfirmModal(false);
+                                }}
+                                className="bg-red-500 text-white px-4 py-2 rounded"
+                            >
+                                Yes
+                            </button>
+                            <button
+                                onClick={() => setShowConfirmModal(false)}
+                                className="bg-gray-300 px-4 py-2 rounded"
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

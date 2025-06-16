@@ -18,6 +18,7 @@ class CustomerRatingResource extends JsonResource
         return [
             'id' => $this->id,
             'odName' => $this->odName,
+            'appointmentNumber' => $this->appointmentNumber,
             'date' => $this->date,
             'clientName' => $this->clientName,
             'sex' => $this->sex,

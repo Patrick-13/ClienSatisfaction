@@ -35,10 +35,10 @@ class UpdateCustomerRatingRequest extends FormRequest
             "timeIn" => ['required', 'max:255'],
             "transactionType" => ['required', 'max:255'],
             "unitVisited" => ['required', 'max:255'],
-            "personnel" => ['required', 'max:255'],
+            "personnel" => ['nullable', 'integer', 'max:255'],
             "rating" => ['required', Rule::in(['Excellent', 'Good', 'Bad', 'Very Bad'])],
             "timeOut" => ['required', 'max:255'],
-            "comments" => ['required', 'max:255'],
+            "comments" => ['required','string','min:1','max:100','regex:/^(?!\s*$)[a-zA-Z\s]+$/'],
         ];
     }
 }
