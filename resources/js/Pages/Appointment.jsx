@@ -1,56 +1,16 @@
-import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import TextAreaInput from "@/Components/TextAreaInput";
-import TextInput from "@/Components/TextInput";
-import { Head, useForm } from "@inertiajs/react";
+import { Contactus } from "@/Components/Appointment/Contactus";
+import { Form } from "@/Components/Appointment/Form";
+import { Hero } from "@/Components/Appointment/Hero";
+import { Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Appointment({
-    flash,
-    divisions,
-    sections,
-    employees,
-    transactiontypes,
-    units,
-}) {
-    const { data, setData, post, reset, errors } = useForm({
-        date: "",
-        time: "",
-        fullname: "",
-        sex: "",
-        sector: "",
-        company: "",
-        address: "",
-        contactNo: "",
-        email: "",
-        remarks: "",
-        termsandcondition: "",
-    });
+export default function Appointment({ flash, transactiontypes, units }) {
+    const [showPrivacyModal, setShowPrivacyModal] = useState(true);
 
-    const selectedSex = data.sex;
-    const selectedSector = data.sector;
-
-    //checkbox gender handler
-    const handleSexChange = (value) => {
-        setData("sex", selectedSex === value ? "" : value);
-    };
-
-    //checkbox sector handler
-    const handleSectorChange = (value) => {
-        setData("sector", selectedSector === value ? "" : value);
-    };
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-
-        post(route("clientappointment.store"), {
-            onSuccess: () => {
-                reset(); // This clears the form fields
-            },
-        });
+    const handlePrivacyAgree = () => {
+        setShowPrivacyModal(false);
     };
 
     //function toast success message
@@ -70,458 +30,46 @@ export default function Appointment({
             <ToastContainer />
             <div className="py-2">
                 <div className="flex justify-center">
-                    <div className="w-full max-w-6xl sm:px-6 lg:px-8">
-                        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <main className="mt-10">
-                                <h1 className="text-2xl font-semibold text-center mb-4">
-                                    Online Appointment System
-                                </h1>
-                                <form
-                                    onSubmit={onSubmit}
-                                    className="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg"
-                                >
-                                    {/* Date */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="date"
-                                                value="Date"
-                                            />
-                                        </div>
-                                        <TextInput
-                                            id="date"
-                                            type="date"
-                                            name="date"
-                                            value={data.date}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData("date", e.target.value)
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.date}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Time */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="time"
-                                                value="Time"
-                                            />
-                                        </div>
-                                        <TextInput
-                                            id="time"
-                                            type="time"
-                                            name="time"
-                                            value={data.time}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData("time", e.target.value)
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.time}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Client's Name */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="fullname"
-                                                value="Fullname"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="fullname"
-                                            type="text"
-                                            name="fullname"
-                                            value={data.fullname}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "fullname",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.fullname}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Sex (Checkboxes) */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="sex"
-                                                value="Sex"
-                                            />
-                                        </div>
-
-                                        <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0 mt-2 items-start md:items-center gap-4">
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sex"
-                                                    value="Male"
-                                                    checked={
-                                                        selectedSex === "Male"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSexChange("Male")
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    Male
-                                                </span>
-                                            </label>
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sex"
-                                                    value="Female"
-                                                    checked={
-                                                        selectedSex === "Female"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSexChange(
-                                                            "Female"
-                                                        )
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    Female
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <InputError
-                                            message={errors.sex}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Sector (Checkboxes) */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="sector"
-                                                value="Sector"
-                                            />
-                                        </div>
-
-                                        <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0 mt-2 items-start md:items-center gap-4">
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sector"
-                                                    value="Government"
-                                                    checked={
-                                                        selectedSector ===
-                                                        "Government"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSectorChange(
-                                                            "Government"
-                                                        )
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    Government
-                                                </span>
-                                            </label>
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sector"
-                                                    value="Private"
-                                                    checked={
-                                                        selectedSector ===
-                                                        "Private"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSectorChange(
-                                                            "Private"
-                                                        )
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    Private
-                                                </span>
-                                            </label>
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sector"
-                                                    value="NGO"
-                                                    checked={
-                                                        selectedSector === "NGO"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSectorChange(
-                                                            "NGO"
-                                                        )
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    NGO
-                                                </span>
-                                            </label>
-                                            <label className="inline-flex items-center gap-2">
-                                                <Checkbox
-                                                    name="sector"
-                                                    value="Other"
-                                                    checked={
-                                                        selectedSector ===
-                                                        "Other"
-                                                    }
-                                                    onChange={() =>
-                                                        handleSectorChange(
-                                                            "Other"
-                                                        )
-                                                    }
-                                                    className="form-checkbox scale-150"
-                                                />
-                                                <span className="ml-2">
-                                                    Other
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <InputError
-                                            message={errors.sector}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Company Name */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="company"
-                                                value="Company Name"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="company"
-                                            type="text"
-                                            name="company"
-                                            value={data.company}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "company",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.company}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Address */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="address"
-                                                value="Address"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="address"
-                                            type="text"
-                                            name="address"
-                                            value={data.address}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "address",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.address}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Contact Number */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="contactNo"
-                                                value="Contact Number"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="contactNo"
-                                            type="text"
-                                            name="contactNo"
-                                            value={data.contactNo}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "contactNo",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.contactNo}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Email */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="email"
-                                                value="Email"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="email"
-                                            type="email"
-                                            name="email"
-                                            value={data.email}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData("email", e.target.value)
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.email}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Remarks */}
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-sm text-red-600">
-                                                *
-                                            </span>
-                                            <InputLabel
-                                                htmlFor="remarks"
-                                                value="Remarks"
-                                            />
-                                        </div>
-
-                                        <TextInput
-                                            id="remarks"
-                                            type="text"
-                                            name="remarks"
-                                            value={data.remarks}
-                                            className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "remarks",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.remarks}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    <div className="mt-4">
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                id="termsandcondition"
-                                                type="checkbox"
-                                                name="termsandcondition"
-                                                checked={
-                                                    data.termsandcondition === 1
-                                                }
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "termsandcondition",
-                                                        e.target.checked ? 1 : 0
-                                                    )
-                                                }
-                                                className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                                            />
-                                            <label
-                                                htmlFor="termsandcondition"
-                                                className="text-sm text-gray-700"
-                                            >
-                                                I agree with terms and
-                                                conditions
-                                                <span className="text-red-600 ml-1">
-                                                    *
-                                                </span>
-                                            </label>
-                                        </div>
-
-                                        <InputError
-                                            message={errors.termsandcondition}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    {/* Submit Button */}
-                                    <div className="mt-4">
+                    <div className="w-full max-w-9xl sm:px-6 lg:px-8">
+                        <Hero />
+                        {showPrivacyModal && (
+                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                <div className="bg-white  border-l-8 border-blue-700 rounded-xl shadow-lg max-w-2xl w-full p-6 space-y-4 overflow-y-auto max-h-[80vh]">
+                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center">
+                                        Data Privacy Act of 2012
+                                    </h2>
+                                    <p className="text-gray-700 dark:text-gray-300 text-xl">
+                                        By continuing to use this online
+                                        appoinment system, you consent to the
+                                        collection, processing, and storage of
+                                        your personal information as outlined
+                                        under Republic Act No. 10173 or the Data
+                                        Privacy Act of 2012. Your data will be
+                                        used solely for official purposes by the
+                                        DENR - EMB. We ensure confidentiality
+                                        and security in accordance with the law
+                                        and its Implementing Rules and
+                                        Regulations.
+                                    </p>
+                                    <div className="text-right">
                                         <button
-                                            type="submit"
-                                            className="w-full bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600"
+                                            onClick={handlePrivacyAgree}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition"
                                         >
-                                            Submit
+                                            I Agree
                                         </button>
                                     </div>
-                                </form>
-                            </main>
-
-                            {/* <Footer /> */}
+                                </div>
+                            </div>
+                        )}
+                        <Form transactiontypes={transactiontypes} units={units}/>
+                        <div className="bg-green-700 px-6 py-4 text-white text-4xl text-center font-bold">
+                            Contact Us
+                        </div>
+                        <Contactus />
+                        <div className="bg-green-700 px-6 py-4 text-white text-xl text-center font-bold tracking-wide">
+                            © COPYRIGHT 2025 ENVIRONMENTAL MANAGEMENT BUREAU
+                            REGION XI - ALL RIGHTS RESERVED
                         </div>
                     </div>
                 </div>

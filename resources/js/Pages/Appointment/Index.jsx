@@ -260,6 +260,30 @@ export default function Index({
                                                 >
                                                     Company Name
                                                 </TableHeading>
+                                                <TableHeading
+                                                    name="transactionType"
+                                                    sort_field={
+                                                        queryParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        queryParams.sort_direction
+                                                    }
+                                                    sortChanged={sortChanged}
+                                                >
+                                                    Transaction Type
+                                                </TableHeading>
+                                                <TableHeading
+                                                    name="unitSection"
+                                                    sort_field={
+                                                        queryParams.sort_field
+                                                    }
+                                                    sort_direction={
+                                                        queryParams.sort_direction
+                                                    }
+                                                    sortChanged={sortChanged}
+                                                >
+                                                    Unit/Section
+                                                </TableHeading>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -294,6 +318,20 @@ export default function Index({
                                                             <td className="px-3 py-2">
                                                                 {
                                                                     appointment.company
+                                                                }
+                                                            </td>
+                                                            <td className="px-3 py-2">
+                                                                {
+                                                                    appointment
+                                                                        .transactionBy
+                                                                        ?.transaction_name
+                                                                }
+                                                            </td>
+                                                            <td className="px-3 py-2">
+                                                                {
+                                                                    appointment
+                                                                        .UnitSectionby
+                                                                        ?.unit_name
                                                                 }
                                                             </td>
                                                         </tr>

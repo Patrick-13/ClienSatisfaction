@@ -8,6 +8,8 @@ use App\Jobs\SendEmailAppointment;
 use App\Mail\AppointmentConfirmationMail;
 use App\Models\Appointment;
 use App\Models\Loginlog;
+use App\Models\TransactionType;
+use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Dompdf\Dompdf;
@@ -56,7 +58,13 @@ class AppointmentController extends Controller
 
     public function index_appointment()
     {
+
+        $transactiontypes = TransactionType::orderBy('transaction_name', 'asc')->get();
+        $units = Unit::orderBy('unit_name', 'asc')->get();
+        
         return inertia("Appointment", [
+            'transactiontypes' => $transactiontypes,
+            'units' => $units,
             'success' => session('success'),
         ]);
     }

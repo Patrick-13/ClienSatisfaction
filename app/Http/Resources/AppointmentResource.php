@@ -17,6 +17,8 @@ class AppointmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'transactionBy' => new TransactionTypeResource($this->transactionBy),
+            'UnitSectionby' => new UnitResource($this->UnitSectionby),
             'appointmentNumber' => $this->appointmentNumber,
             'date' => $this->date,
             'time' => $this->time,

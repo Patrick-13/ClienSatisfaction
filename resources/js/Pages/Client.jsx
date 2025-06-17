@@ -68,6 +68,8 @@ export default function Client({
             );
             const appointment = response.data;
 
+            console.log(appointment);
+
             setAppointmentData(appointment);
             setError("");
 

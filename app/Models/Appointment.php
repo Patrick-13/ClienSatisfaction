@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    protected $fillable = ['id', 'appointmentNumber', 'date', 'time', 'fullname', 'sex', 'sector', 'company', 'address', 'email', 'contactNo', 'remarks', 'termsandcondition'];
+    protected $fillable = ['id', 'transactionType', 'unitSection', 'appointmentNumber', 'date', 'time', 'fullname', 'sex', 'sector', 'company', 'address', 'email', 'contactNo', 'remarks', 'termsandcondition'];
+
+    public function transactionBy()
+    {
+        return $this->belongsTo(TransactionType::class, 'transactionType');
+    }
+
+    public function UnitSectionby()
+    {
+        return $this->belongsTo(Unit::class, "unitSection");
+    }
 }
