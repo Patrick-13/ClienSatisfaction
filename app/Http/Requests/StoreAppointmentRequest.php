@@ -24,8 +24,9 @@ class StoreAppointmentRequest extends FormRequest
     {
         return [
             "appointmentNumber" => ['string'],
-            "transactionType" => ['required','integer'],
-            "unitSection" => ['required','integer'],
+            "transactionType" => ['required', 'integer'],
+            "unitSection" => ['required', 'array'],
+            "unitSection.*" => ['integer', 'exists:units,id'],
             "date" => ['required', 'string'],
             "time" => ['required', 'string'],
             "fullname" => ['required', 'string'],

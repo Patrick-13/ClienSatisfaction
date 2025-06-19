@@ -30,7 +30,7 @@ Route::get('/unauthorizedaccess', function () {
 Route::resource('/customer', CustomerRatingController::class);
 
 Route::resource('clientappointment', AppointmentController::class);
-Route::get('/appointment', [AppointmentController::class, 'index_appointment']);
+Route::get('/appointment', [AppointmentController::class, 'index_appointment'])->name('appointment');
 Route::get('/clientappointment/{appointmentnumber}/exists', [AppointmentController::class, 'checkAppointmentNumberExists']);
 
 //only verified user can access this route

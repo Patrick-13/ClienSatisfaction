@@ -8,6 +8,9 @@ class Appointment extends Model
 {
     protected $fillable = ['id', 'transactionType', 'unitSection', 'appointmentNumber', 'date', 'time', 'fullname', 'sex', 'sector', 'company', 'address', 'email', 'contactNo', 'remarks', 'termsandcondition'];
 
+    protected $casts = [
+        'unitSection' => 'array',
+    ];
     public function transactionBy()
     {
         return $this->belongsTo(TransactionType::class, 'transactionType');

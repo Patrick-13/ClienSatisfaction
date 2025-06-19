@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +19,9 @@ class AppointmentResource extends JsonResource
         return [
             'id' => $this->id,
             'transactionBy' => new TransactionTypeResource($this->transactionBy),
-            'UnitSectionby' => new UnitResource($this->UnitSectionby),
+            'UnitSectionby' => UnitResource::collection(
+                Unit::whereIn('id', $this->unitSection ?? [])->get()
+            ),
             'appointmentNumber' => $this->appointmentNumber,
             'date' => $this->date,
             'time' => $this->time,

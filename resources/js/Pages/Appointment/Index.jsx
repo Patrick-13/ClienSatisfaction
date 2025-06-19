@@ -1,14 +1,14 @@
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { FaFilePdf, FaTrashAlt } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 import { CiFilter } from "react-icons/ci";
 import InputLabel from "@/Components/InputLabel";
 import SelectInput from "@/Components/SelectInput";
 import Pagination from "@/Components/Pagination"; // Assuming you have a Pagination component
-import { FaEye } from "react-icons/fa";
 import { useState } from "react";
 import TextInput from "@/Components/TextInput";
 import TableHeading from "@/Components/TableHeading";
+import { SECTION_UNIT_CLASS_MAP, SECTION_UNIT_TEXT_MAP } from "@/constant";
 
 export default function Index({
     auth,
@@ -327,12 +327,40 @@ export default function Index({
                                                                         ?.transaction_name
                                                                 }
                                                             </td>
-                                                            <td className="px-3 py-2">
-                                                                {
-                                                                    appointment
-                                                                        .UnitSectionby
-                                                                        ?.unit_name
-                                                                }
+                                                            <td className="px-3 py-2 whitespace-nowrap">
+                                                                <div className="flex items-center gap-1">
+                                                                    {Array.isArray(
+                                                                        appointment.UnitSectionby
+                                                                    ) &&
+                                                                        appointment.UnitSectionby.map(
+                                                                            (
+                                                                                unit
+                                                                            ) => (
+                                                                                <div
+                                                                                    key={
+                                                                                        unit.id
+                                                                                    }
+                                                                                >
+                                                                                    <span
+                                                                                        className={
+                                                                                            "px-2 py-1 rounded text-white " +
+                                                                                            SECTION_UNIT_CLASS_MAP[
+                                                                                                unit
+                                                                                                    .unit_name
+                                                                                            ]
+                                                                                        }
+                                                                                    >
+                                                                                        {
+                                                                                            SECTION_UNIT_TEXT_MAP[
+                                                                                                unit
+                                                                                                    .unit_name
+                                                                                            ]
+                                                                                        }
+                                                                                    </span>
+                                                                                </div>
+                                                                            )
+                                                                        )}
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     )

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AppointmentController extends Controller
 {
@@ -24,6 +25,7 @@ class AppointmentController extends Controller
         $sortDirection = request("sort_direction", "desc");
 
         $query = Appointment::query();
+
 
         // If no search, limit to today's date
         if (!request('searchclient')) {
@@ -61,7 +63,7 @@ class AppointmentController extends Controller
 
         $transactiontypes = TransactionType::orderBy('transaction_name', 'asc')->get();
         $units = Unit::orderBy('unit_name', 'asc')->get();
-        
+
         return inertia("Appointment", [
             'transactiontypes' => $transactiontypes,
             'units' => $units,
@@ -81,14 +83,27 @@ class AppointmentController extends Controller
         $data = $request->validated();
         $data['appointmentNumber'] = $this->generateUniqueAppointmentNumber();
 
+        // ReCAPTCHA validation
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $request->input('captcha'),
+        ]);
+
+        if (!$response->json()['success']) {
+            return back()->withErrors(['captcha' => 'CAPTCHA verification failed. Please try again.'])->withInput();
+        }
+
+        // Create the appointment
         $appointment = Appointment::create($data);
 
+        // Send email
         Mail::to($appointment->email)->send(new AppointmentConfirmationMail($appointment));
 
         return redirect()->route('appointment')->with([
-            'success' => 'Client has Successfully created appointment!',
+            'success' => 'Client has successfully created an appointment!',
         ]);
     }
+
 
     public function show() {}
 
@@ -152,12 +167,20 @@ class AppointmentController extends Controller
         <th>Time</th>
         <th>Client`s Fullname</th>
         <th>Company Name</th>
+        <th>Transaction Type</th>
+        <th>Unit/Section (Visited)</th>
         </tr></thead>';
         $html .= '<tbody>';
 
-        $count = 0; // Initialize ticket count
-
         foreach ($data as $row) {
+
+            $unitNames = '';
+            if (is_array($row->unitSection)) {
+                $units = Unit::whereIn('id', $row->unitSection)->get();
+                $unitNames = implode(', ', $units->pluck('unit_name')->toArray());
+            } else {
+                $unitNames = $row->UnitSectionby?->unit_name ?? '';
+            }
 
             $html .= '<tr>
             <td>' . $row->appointmentNumber . '</td>
@@ -165,6 +188,8 @@ class AppointmentController extends Controller
             <td>' . $row->time . '</td>
             <td>' . $row->fullname . '</td>
             <td>' . $row->company . '</td>
+            <td>' . $row->transactionBy?->transaction_name . '</td>
+            <td>' . $unitNames . '</td>
             </tr>';
         }
         $appointmentcount = count($data);

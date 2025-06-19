@@ -24,3 +24,19 @@ export const GENDER_STATUS_TEXT_MAP = {
 }
 
 
+export const SECTION_UNIT_CLASS_MAP = {
+    'Records' : 'bg-emerald-500',
+    'Cashier': 'bg-blue-500 ',
+    'CPD' : 'bg-amber-500',
+    'Legal' : 'bg-red-500',
+}
+
+export const SECTION_UNIT_TEXT_MAP = {
+    'Records' : 'Records',
+    'Cashier': 'Cashier',
+    'CPD' : 'CPD',
+    'Legal': 'Legal',
+}
+
+
+

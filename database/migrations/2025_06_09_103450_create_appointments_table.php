@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('appointmentNumber')->unique();
             $table->date('date');
             $table->time('time');
+            $table->foreignId('transactionType')->constrained()->onDelete('cascade');
             $table->string('fullname');
             $table->string('sex');
             $table->string('sector');

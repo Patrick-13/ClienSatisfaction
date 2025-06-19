@@ -175,6 +175,12 @@ export default function Index({
         return `${order}${suffix} transaction`;
     }
 
+    const handleRowsPerPageChange = (e) => {
+        const rowsPerPage = parseInt(e.target.value);
+        const newParams = { ...queryParams, per_page: rowsPerPage };
+        router.get(route("ratingdata.index"), newParams);
+    };
+
     useEffect(() => {
         if (flash.message.success) {
             toast.success(flash.message.success);
@@ -367,428 +373,459 @@ export default function Index({
                                         </div>
                                     </div>
                                 </div>
-                                <div className="overflow-x-auto">
-                                    <div className="md:h-[500px] lg:h-[500px] overflow-y-auto">
-                                        <table className="w-full text-sm text-left trl:text-right text-gray-500 dark:text-gray-400">
-                                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 z-10 sticky top-0">
-                                                <tr className="text-nowrap">
-                                                    <TableHeading
-                                                        name="id"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
+                                <div className="overflow-x-auto mt-4">
+                                    <div className="mb-2 flex flex-wrap items-center justify-center sm:justify-start">
+                                        <InputLabel
+                                            htmlFor="show"
+                                            value="Show"
+                                            className="w-full sm:w-auto mb-2 sm:mb-0 sm:ml-2 text-lg"
+                                        />
+                                        <SelectInput
+                                            className="w-full sm:w-auto mb-2 sm:mb-0 sm:ml-2"
+                                            value={queryParams.per_page}
+                                            onChange={handleRowsPerPageChange}
+                                        >
+                                            {[10, 20, 50, 100].map(
+                                                (perPage) => (
+                                                    <option
+                                                        key={perPage}
+                                                        value={perPage}
                                                     >
-                                                        ID
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="odName"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Officer of the Day
-                                                        (Name)
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="date"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Date
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="clientName"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Client Name
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="sex"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Sex
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="sector"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Sector
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="companyName"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Company Name
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="unit"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Section/Unit
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="timeIn"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Time In
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="timeOut"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Time Out
-                                                    </TableHeading>
-                                                    <th>Total Time Process</th>
-                                                    <TableHeading
-                                                        name="rating_order"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Transaction Order
-                                                    </TableHeading>
-                                                    <TableHeading
-                                                        name="rating"
-                                                        sort_field={
-                                                            queryParams.sort_field
-                                                        }
-                                                        sort_direction={
-                                                            queryParams.sort_direction
-                                                        }
-                                                        sortChanged={
-                                                            sortChanged
-                                                        }
-                                                    >
-                                                        Rating
-                                                    </TableHeading>
-                                                    <th className="px-3 py-2">
-                                                        Actions
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {clientratingdatas &&
-                                                clientratingdatas.data.length >
-                                                    0 ? (
-                                                    clientratingdatas.data.map(
-                                                        (clientratingdata) => (
-                                                            <tr
-                                                                className="bg-white border-b  dark:bg-gray-800 dark:border-gray-700"
-                                                                key={
-                                                                    clientratingdata.id
-                                                                }
-                                                            >
-                                                                <td className="px-3 py-2">
-                                                                    {
+                                                        {perPage} Rows
+                                                    </option>
+                                                )
+                                            )}
+                                        </SelectInput>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <div className="md:h-[500px] lg:h-[500px] overflow-y-auto">
+                                            <table className="w-full text-sm text-left trl:text-right text-gray-500 dark:text-gray-400">
+                                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500 z-10 sticky top-0">
+                                                    <tr className="text-nowrap">
+                                                        <TableHeading
+                                                            name="id"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            ID
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="odName"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Officer of the Day
+                                                            (Name)
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="date"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Date
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="clientName"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Client Name
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="sex"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Sex
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="sector"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Sector
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="companyName"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Company Name
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="unit"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Section/Unit
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="timeIn"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Time In
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="timeOut"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Time Out
+                                                        </TableHeading>
+                                                        <th>
+                                                            Total Time Process
+                                                        </th>
+                                                        <TableHeading
+                                                            name="rating_order"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Transaction Order
+                                                        </TableHeading>
+                                                        <TableHeading
+                                                            name="rating"
+                                                            sort_field={
+                                                                queryParams.sort_field
+                                                            }
+                                                            sort_direction={
+                                                                queryParams.sort_direction
+                                                            }
+                                                            sortChanged={
+                                                                sortChanged
+                                                            }
+                                                        >
+                                                            Rating
+                                                        </TableHeading>
+                                                        <th className="px-3 py-2">
+                                                            Actions
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {clientratingdatas &&
+                                                    clientratingdatas.data
+                                                        .length > 0 ? (
+                                                        clientratingdatas.data.map(
+                                                            (
+                                                                clientratingdata
+                                                            ) => (
+                                                                <tr
+                                                                    className="bg-white border-b  dark:bg-gray-800 dark:border-gray-700"
+                                                                    key={
                                                                         clientratingdata.id
                                                                     }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.odName
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.date
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.clientName
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {clientratingdata.sex ===
-                                                                    "Male" ? (
-                                                                        <IoIosMale
-                                                                            className="text-blue-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    ) : (
-                                                                        <IoIosFemale
-                                                                            className="text-pink-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    )}
-                                                                    {
-                                                                        <span
-                                                                            className={
-                                                                                "px-2 py-1 rounded text-white " +
-                                                                                GENDER_STATUS_CLASS_MAP[
-                                                                                    clientratingdata
-                                                                                        .sex
-                                                                                ]
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                GENDER_STATUS_TEXT_MAP[
-                                                                                    clientratingdata
-                                                                                        .sex
-                                                                                ]
-                                                                            }
-                                                                        </span>
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.sector
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.companyName
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata
-                                                                            .unitBy
-                                                                            ?.unit_name
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.timeIn
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        clientratingdata.timeOut
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {(() => {
-                                                                        const timeIn =
-                                                                            parse(
-                                                                                clientratingdata.timeIn,
-                                                                                "HH:mm",
-                                                                                new Date()
-                                                                            );
-                                                                        const timeOut =
-                                                                            parse(
-                                                                                clientratingdata.timeOut,
-                                                                                "HH:mm",
-                                                                                new Date()
-                                                                            );
-
-                                                                        const totalMinutes =
-                                                                            differenceInMinutes(
-                                                                                timeOut,
-                                                                                timeIn
-                                                                            );
-                                                                        const hours =
-                                                                            Math.floor(
-                                                                                totalMinutes /
-                                                                                    60
-                                                                            );
-                                                                        const minutes =
-                                                                            totalMinutes %
-                                                                            60;
-
-                                                                        return `${hours}h ${minutes}m`;
-                                                                    })()}
-                                                                </td>
-                                                                <td className="px-3 py-2">
-                                                                    {formatOrder(
-                                                                        clientratingdata.rating_order
-                                                                    )}
-                                                                </td>
-
-                                                                <td>
-                                                                    {clientratingdata.rating ===
-                                                                    "Very Bad" ? (
-                                                                        <BsEmojiAngry
-                                                                            className="text-red-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    ) : clientratingdata.rating ===
-                                                                      "Bad" ? (
-                                                                        <BsEmojiFrown
-                                                                            className="text-yellow-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    ) : clientratingdata.rating ===
-                                                                      "Good" ? (
-                                                                        <BsEmojiSmile
-                                                                            className="text-blue-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    ) : clientratingdata.rating ===
-                                                                      "Excellent" ? (
-                                                                        <BsEmojiLaughing
-                                                                            className="text-green-500 inline-block mr-1"
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    ) : null}
-
-                                                                    <span
-                                                                        className={
-                                                                            "px-2 py-1 rounded text-white " +
-                                                                            RATING_STATUS_CLASS_MAP[
-                                                                                clientratingdata
-                                                                                    .rating
-                                                                            ]
-                                                                        }
-                                                                    >
+                                                                >
+                                                                    <td className="px-3 py-2">
                                                                         {
-                                                                            RATING_STATUS_TEXT_MAP[
-                                                                                clientratingdata
-                                                                                    .rating
-                                                                            ]
+                                                                            clientratingdata.id
                                                                         }
-                                                                    </span>
-                                                                </td>
-                                                                <td className="px-3 py-2 flex text-nowrap">
-                                                                    {hasButton(
-                                                                        2
-                                                                    ) && (
-                                                                        <Link
-                                                                            href={route(
-                                                                                "ratingdata.edit",
-                                                                                clientratingdata.id
-                                                                            )}
-                                                                            className="font-medium text-blue dark:text-blue-500 hover:underline mx-1"
-                                                                        >
-                                                                            <FaPencilAlt
-                                                                                className="text-green-500"
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.odName
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.date
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.clientName
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2 flex text-nowrap">
+                                                                        {clientratingdata.sex ===
+                                                                        "Male" ? (
+                                                                            <IoIosMale
+                                                                                className="text-blue-500 inline-block mr-1"
                                                                                 size={
-                                                                                    18
+                                                                                    16
                                                                                 }
                                                                             />
-                                                                        </Link>
-                                                                    )}
-                                                                    {hasButton(
-                                                                        3
-                                                                    ) && (
-                                                                        <button
-                                                                            onClick={(
-                                                                                e
-                                                                            ) =>
-                                                                                deleteRatingInfo(
-                                                                                    clientratingdata
-                                                                                )
-                                                                            }
-                                                                            className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
-                                                                        >
-                                                                            <FaTrashAlt
-                                                                                className="text-red-600"
+                                                                        ) : (
+                                                                            <IoIosFemale
+                                                                                className="text-pink-500 inline-block mr-1"
                                                                                 size={
-                                                                                    18
+                                                                                    16
                                                                                 }
                                                                             />
-                                                                        </button>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-3 py-2 flex text-nowrap"></td>
-                                                            </tr>
+                                                                        )}
+                                                                        {
+                                                                            <span
+                                                                                className={
+                                                                                    "px-2 py-1 rounded text-white " +
+                                                                                    GENDER_STATUS_CLASS_MAP[
+                                                                                        clientratingdata
+                                                                                            .sex
+                                                                                    ]
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    GENDER_STATUS_TEXT_MAP[
+                                                                                        clientratingdata
+                                                                                            .sex
+                                                                                    ]
+                                                                                }
+                                                                            </span>
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.sector
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.companyName
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata
+                                                                                .unitBy
+                                                                                ?.unit_name
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.timeIn
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {
+                                                                            clientratingdata.timeOut
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {(() => {
+                                                                            const timeIn =
+                                                                                parse(
+                                                                                    clientratingdata.timeIn,
+                                                                                    "HH:mm",
+                                                                                    new Date()
+                                                                                );
+                                                                            const timeOut =
+                                                                                parse(
+                                                                                    clientratingdata.timeOut,
+                                                                                    "HH:mm",
+                                                                                    new Date()
+                                                                                );
+
+                                                                            const totalMinutes =
+                                                                                differenceInMinutes(
+                                                                                    timeOut,
+                                                                                    timeIn
+                                                                                );
+                                                                            const hours =
+                                                                                Math.floor(
+                                                                                    totalMinutes /
+                                                                                        60
+                                                                                );
+                                                                            const minutes =
+                                                                                totalMinutes %
+                                                                                60;
+
+                                                                            return `${hours}h ${minutes}m`;
+                                                                        })()}
+                                                                    </td>
+                                                                    <td className="px-3 py-2">
+                                                                        {formatOrder(
+                                                                            clientratingdata.rating_order
+                                                                        )}
+                                                                    </td>
+
+                                                                    <td className="px-3 py-2 whitespace-nowrap">
+                                                                        <div className="flex items-center">
+                                                                            {clientratingdata.rating ===
+                                                                            "Very Bad" ? (
+                                                                                <BsEmojiAngry
+                                                                                    className="text-red-500 inline-block mr-1"
+                                                                                    size={
+                                                                                        16
+                                                                                    }
+                                                                                />
+                                                                            ) : clientratingdata.rating ===
+                                                                              "Bad" ? (
+                                                                                <BsEmojiFrown
+                                                                                    className="text-yellow-500 inline-block mr-1"
+                                                                                    size={
+                                                                                        16
+                                                                                    }
+                                                                                />
+                                                                            ) : clientratingdata.rating ===
+                                                                              "Good" ? (
+                                                                                <BsEmojiSmile
+                                                                                    className="text-blue-500 inline-block mr-1"
+                                                                                    size={
+                                                                                        16
+                                                                                    }
+                                                                                />
+                                                                            ) : clientratingdata.rating ===
+                                                                              "Excellent" ? (
+                                                                                <BsEmojiLaughing
+                                                                                    className="text-green-500 inline-block mr-1"
+                                                                                    size={
+                                                                                        16
+                                                                                    }
+                                                                                />
+                                                                            ) : null}
+
+                                                                            <span
+                                                                                className={
+                                                                                    "px-2 py-1 rounded text-white " +
+                                                                                    RATING_STATUS_CLASS_MAP[
+                                                                                        clientratingdata
+                                                                                            .rating
+                                                                                    ]
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    RATING_STATUS_TEXT_MAP[
+                                                                                        clientratingdata
+                                                                                            .rating
+                                                                                    ]
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="px-3 py-2 flex text-nowrap">
+                                                                        {hasButton(
+                                                                            2
+                                                                        ) && (
+                                                                            <Link
+                                                                                href={route(
+                                                                                    "ratingdata.edit",
+                                                                                    clientratingdata.id
+                                                                                )}
+                                                                                className="font-medium text-blue dark:text-blue-500 hover:underline mx-1"
+                                                                            >
+                                                                                <FaPencilAlt
+                                                                                    className="text-green-500"
+                                                                                    size={
+                                                                                        18
+                                                                                    }
+                                                                                />
+                                                                            </Link>
+                                                                        )}
+                                                                        {hasButton(
+                                                                            3
+                                                                        ) && (
+                                                                            <button
+                                                                                onClick={(
+                                                                                    e
+                                                                                ) =>
+                                                                                    deleteRatingInfo(
+                                                                                        clientratingdata
+                                                                                    )
+                                                                                }
+                                                                                className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
+                                                                            >
+                                                                                <FaTrashAlt
+                                                                                    className="text-red-600"
+                                                                                    size={
+                                                                                        18
+                                                                                    }
+                                                                                />
+                                                                            </button>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            )
                                                         )
-                                                    )
-                                                ) : (
-                                                    <tr>
-                                                        <td
-                                                            colSpan="11"
-                                                            className="text-center py-4"
-                                                        >
-                                                            No data available
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
+                                                    ) : (
+                                                        <tr>
+                                                            <td
+                                                                colSpan="11"
+                                                                className="text-center py-4"
+                                                            >
+                                                                No data
+                                                                available
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
