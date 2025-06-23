@@ -20,4 +20,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Unit::class, "unitSection");
     }
+
+    public function appointmentBy()
+    {
+        return $this->belongsTo(CustomerRating::class, 'appointmentNumber', 'appointmentNumber');
+    }
 }

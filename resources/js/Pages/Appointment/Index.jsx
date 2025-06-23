@@ -282,8 +282,9 @@ export default function Index({
                                                     }
                                                     sortChanged={sortChanged}
                                                 >
-                                                    Unit/Section
+                                                    Unit/Section (Visited)
                                                 </TableHeading>
+                                                <th>Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -327,6 +328,7 @@ export default function Index({
                                                                         ?.transaction_name
                                                                 }
                                                             </td>
+
                                                             <td className="px-3 py-2 whitespace-nowrap">
                                                                 <div className="flex items-center gap-1">
                                                                     {Array.isArray(
@@ -361,6 +363,11 @@ export default function Index({
                                                                             )
                                                                         )}
                                                                 </div>
+                                                            </td>
+                                                            <td className="px-3 py-2">
+                                                                {appointment.appointmentBy
+                                                                    ? <span className="text-green-600">Completed</span>
+                                                                    : <span className="text-red-600">No Show</span>}
                                                             </td>
                                                         </tr>
                                                     )

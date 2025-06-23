@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Route::get('/', [DashboardController::class, 'landingpage']);
-Route::get('/', [DashboardController::class, 'clientindex'])->name('client.index');
+Route::get('/customersatisfaction', [DashboardController::class, 'clientindex'])->name('client.index');
 
 Route::get('/superuseraccess', function () {
     return Inertia::render('SuperUserAccess'); // Or wherever you show the account disabled message

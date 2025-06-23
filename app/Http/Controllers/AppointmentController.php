@@ -13,7 +13,7 @@ use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Dompdf\Dompdf;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class AppointmentController extends Controller
@@ -26,20 +26,19 @@ class AppointmentController extends Controller
 
         $query = Appointment::query();
 
-
         // If no search, limit to today's date
-        if (!request('searchclient')) {
-            $query->where('date', today());
-        }
+        // if (!request('searchclient')) {
+        //     $query->where('date', today());
+        // }
 
-        // Search logic
-        if (request('searchclient')) {
-            $search = request('searchclient');
-            $query->where(function ($q) use ($search) {
-                $q->where('appointmentNumber', $search)
-                    ->orWhere('fullname', 'like', '%' . $search . '%');
-            });
-        }
+        // // Search logic
+        // if (request('searchclient')) {
+        //     $search = request('searchclient');
+        //     $query->where(function ($q) use ($search) {
+        //         $q->where('appointmentNumber', $search)
+        //             ->orWhere('fullname', 'like', '%' . $search . '%');
+        //     });
+        // }
 
         $appointments = $query->orderBy($sortField, $sortDirection)
             ->paginate(10)
@@ -64,9 +63,16 @@ class AppointmentController extends Controller
         $transactiontypes = TransactionType::orderBy('transaction_name', 'asc')->get();
         $units = Unit::orderBy('unit_name', 'asc')->get();
 
+        // Group appointments by date and time and count how many exist per slot
+        $appointmentLimits = Appointment::select('date', 'time', 'transactionType', DB::raw('COUNT(*) as count'))
+            ->groupBy('date', 'time', 'transactionType')
+            ->get()
+            ->groupBy('date');
+
         return inertia("Appointment", [
             'transactiontypes' => $transactiontypes,
             'units' => $units,
+            'appointmentLimits' => $appointmentLimits,
             'success' => session('success'),
         ]);
     }
@@ -83,7 +89,6 @@ class AppointmentController extends Controller
         $data = $request->validated();
         $data['appointmentNumber'] = $this->generateUniqueAppointmentNumber();
 
-        // ReCAPTCHA validation
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => env('RECAPTCHA_SECRET_KEY'),
             'response' => $request->input('captcha'),
@@ -93,17 +98,24 @@ class AppointmentController extends Controller
             return back()->withErrors(['captcha' => 'CAPTCHA verification failed. Please try again.'])->withInput();
         }
 
-        // Create the appointment
+        $hasAppointmentToday = Appointment::where('email', $request->email)
+            ->whereDate('created_at', now()->toDateString())
+            ->exists();
+
+        if ($hasAppointmentToday) {
+            return redirect()->route('appointment')->with([
+                'info' => 'You already have an appointment scheduled for today using this email.',
+            ]);
+        }
+
         $appointment = Appointment::create($data);
 
-        // Send email
         Mail::to($appointment->email)->send(new AppointmentConfirmationMail($appointment));
 
         return redirect()->route('appointment')->with([
-            'success' => 'Client has successfully created an appointment!',
+            'success' => 'Client has Successfully created appointment!',
         ]);
     }
-
 
     public function show() {}
 

@@ -7,7 +7,6 @@ import TextInput from "@/Components/TextInput";
 import SelectInput from "@/Components/SelectInput";
 import Sexgraphanalytics from "./Graphs/Sexgraphanalytics";
 import Ratinggraphanalytics from "./Graphs/Ratinggraphanalytics";
-import QuarterlyRatinganalytics from "./Graphs/QuarterlyRatinganalytics";
 
 export default function Dashboard({
     excellent,
@@ -16,6 +15,8 @@ export default function Dashboard({
     veryBad,
     male,
     female,
+    completed,
+    noshow,
 }) {
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
@@ -29,7 +30,12 @@ export default function Dashboard({
         veryBad,
         male,
         female,
+        completed,
+        noshow,
     });
+
+    console.log("completed" , stats.completed);
+    console.log("noshow" , stats.noshow);
 
     useEffect(() => {
         let intervalId;
@@ -86,7 +92,7 @@ export default function Dashboard({
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="flex flex-wrap gap-4 mb-6">
-                                <div className="flex flex-col">
+                                <div className="flex flex-col w-full sm:w-56">
                                     <InputLabel
                                         htmlFor="dateFrom"
                                         value="Date From"
@@ -95,15 +101,14 @@ export default function Dashboard({
                                         id="dateFrom"
                                         value={dateFrom}
                                         type="date"
-                                        onChange={(e) => {
-                                            const selectedDateFrom =
-                                                e.target.value;
-                                            setDateFrom(selectedDateFrom);
-                                        }}
-                                        className="w-56 text-gray-900"
+                                        onChange={(e) =>
+                                            setDateFrom(e.target.value)
+                                        }
+                                        className="text-gray-900"
                                     />
                                 </div>
-                                <div className="flex flex-col">
+
+                                <div className="flex flex-col w-full sm:w-56">
                                     <InputLabel
                                         htmlFor="dateTo"
                                         value="Date To"
@@ -112,15 +117,14 @@ export default function Dashboard({
                                         id="dateTo"
                                         value={dateTo}
                                         type="date"
-                                        onChange={(e) => {
-                                            const selectedDateTo =
-                                                e.target.value;
-                                            setDateTo(selectedDateTo);
-                                        }}
-                                        className="w-56 text-gray-900"
+                                        onChange={(e) =>
+                                            setDateTo(e.target.value)
+                                        }
+                                        className="text-gray-900"
                                     />
                                 </div>
-                                <div className="flex flex-col">
+
+                                <div className="flex flex-col w-full sm:w-56">
                                     <InputLabel
                                         htmlFor="sector"
                                         value="Filter Sector"
@@ -128,12 +132,10 @@ export default function Dashboard({
                                     <SelectInput
                                         id="sector"
                                         value={sector}
-                                        onChange={(e) => {
-                                            const selectedSector =
-                                                e.target.value;
-                                            setSector(selectedSector);
-                                        }}
-                                        className="w-56 text-gray-900"
+                                        onChange={(e) =>
+                                            setSector(e.target.value)
+                                        }
+                                        className="text-gray-900"
                                     >
                                         <option value="">Select Sector</option>
                                         <option value="Government">
@@ -144,7 +146,8 @@ export default function Dashboard({
                                         <option value="Other">Other</option>
                                     </SelectInput>
                                 </div>
-                                <div className="flex flex-col">
+
+                                <div className="flex flex-col w-full sm:w-56">
                                     <InputLabel
                                         htmlFor="sex"
                                         value="Filter Sex"
@@ -152,11 +155,8 @@ export default function Dashboard({
                                     <SelectInput
                                         id="sex"
                                         value={sex}
-                                        onChange={(e) => {
-                                            const selectedSex = e.target.value;
-                                            setSex(selectedSex);
-                                        }}
-                                        className="w-56 text-gray-900"
+                                        onChange={(e) => setSex(e.target.value)}
+                                        className="text-gray-900"
                                     >
                                         <option value="">Select Sex</option>
                                         <option value="Male">Male</option>
@@ -164,7 +164,7 @@ export default function Dashboard({
                                     </SelectInput>
                                 </div>
 
-                                <div className="flex flex-col">
+                                <div className="flex flex-col w-full sm:w-56">
                                     <InputLabel
                                         htmlFor="rating"
                                         value="Filter Rating"
@@ -172,12 +172,10 @@ export default function Dashboard({
                                     <SelectInput
                                         id="rating"
                                         value={rating}
-                                        onChange={(e) => {
-                                            const selectedRating =
-                                                e.target.value;
-                                            setRating(selectedRating);
-                                        }}
-                                        className="w-56 text-gray-900"
+                                        onChange={(e) =>
+                                            setRating(e.target.value)
+                                        }
+                                        className="text-gray-900"
                                     >
                                         <option value="">Select Rating</option>
                                         <option value="Excellent">
@@ -191,6 +189,7 @@ export default function Dashboard({
                                     </SelectInput>
                                 </div>
                             </div>
+
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div className="bg-white shadow-md rounded-lg p-6">
                                     <Sexgraphanalytics
@@ -207,8 +206,60 @@ export default function Dashboard({
                                         veryBad={stats.veryBad}
                                     />
                                 </div>
-                                <div className="bg-white shadow-md rounded-lg p-6">
-                                    <QuarterlyRatinganalytics />
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+                                <div className="bg-gray-100 shadow-md rounded-lg p-6 flex items-center justify-center">
+                                    Coming Soon
+                                </div>
+                                <div className="bg-gray-100 shadow-md rounded-lg p-6 flex items-center justify-center">
+                                    Coming Soon
+                                </div>
+
+                                <div className="grid grid-rows F-1 lg:grid-rows-2 gap-8">
+                                    <div className="bg-gray-100 border-l-4 border-blue-500 shadow-sm rounded-xl p-5 flex items-center justify-between hover:shadow-md transition">
+                                        <div>
+                                            <h3 className="text-sm font-semibold text-gray-500">
+                                                Total Appointments
+                                            </h3>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {(stats?.completed || 0) +
+                                                    (stats?.noshow || 0)}
+                                            </p>
+                                        </div>
+
+                                        <div className="text-blue-500 text-3xl flex items-center h-full">
+                                            📋
+                                        </div>
+                                    </div>
+
+                                     <div className="bg-gray-100 border-l-4 border-green-500 shadow-sm rounded-xl p-5 flex items-center justify-between hover:shadow-md transition">
+                                         <div>
+                                        <h3 className="text-sm font-semibold text-gray-500">
+                                            Completed
+                                        </h3>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {stats?.completed || 0}
+                                        </p>
+                                        </div>
+
+                                        <div className="text-blue-500 text-3xl flex items-center h-full">
+                                            ✅
+                                        </div>
+                                    </div>
+                                      <div className="bg-gray-100 border-l-4 border-red-500 shadow-sm rounded-xl p-5 flex items-center justify-between hover:shadow-md transition">
+                                              <div>
+                                        <h3 className="text-sm font-semibold text-gray-500">
+                                            No Show
+                                        </h3>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {stats?.noshow || 0}
+                                        </p>
+                                        </div> 
+                                        <div className="text-blue-500 text-3xl flex items-center h-full">
+                                            ❌
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

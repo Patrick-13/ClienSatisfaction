@@ -60,7 +60,7 @@ export default function Sexgraphanalytics({ male, female }) {
 
     return (
         <div className="w-full px-6 mt-6">
-            <h2 className="text-lg font-semibold text-center mb-4">
+            <h2 className="text-lg font-semibold text-center mb-4 bg-gradient-to-r from-blue-500 to-pink-400 text-white py-2 px-4 rounded-full">
                 Male vs Female
             </h2>
             <Bar data={data} options={options} plugins={[ChartDataLabels]} />

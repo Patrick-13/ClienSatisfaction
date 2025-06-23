@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Appointment({ flash, transactiontypes, units }) {
+export default function Appointment({ flash, transactiontypes, units, appointmentLimits }) {
     const [showPrivacyModal, setShowPrivacyModal] = useState(true);
 
     const handlePrivacyAgree = () => {
@@ -21,6 +21,10 @@ export default function Appointment({ flash, transactiontypes, units }) {
 
         if (flash.message.error) {
             toast.error(flash.message.error);
+        }
+
+        if (flash.message.info) {
+            toast.info(flash.message.info);
         }
     }, [flash]);
 
@@ -62,14 +66,18 @@ export default function Appointment({ flash, transactiontypes, units }) {
                                 </div>
                             </div>
                         )}
-                        <Form transactiontypes={transactiontypes} units={units}/>
-                        <div className="bg-green-700 px-6 py-4 text-white text-4xl text-center font-bold">
+                        <Form
+                            transactiontypes={transactiontypes}
+                            units={units}
+                            appointmentLimits={appointmentLimits}
+                        />
+                        <div className="bg-green-700 px-6 py-4 text-white text-md sm:text-lg md:text-2xl text-center font-bold">
                             Contact Us
                         </div>
                         <Contactus />
-                        <div className="bg-green-700 px-6 py-4 text-white text-xl text-center font-bold tracking-wide">
-                            © COPYRIGHT 2025 ENVIRONMENTAL MANAGEMENT BUREAU
-                            REGION XI - ALL RIGHTS RESERVED
+                        <div className="bg-green-700 px-6 py-4 text-white text-md sm:text-lg md:text-2xl text-center font-bold tracking-wide">
+                            © Copyright 2025 Environmental Management Bureau
+                            Region XI - All Rights Reserved
                         </div>
                     </div>
                 </div>

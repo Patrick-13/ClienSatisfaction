@@ -11,7 +11,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import MultiSelectDropdown from "../MultiSelectDropdown";
 
-export const Form = ({ transactiontypes, units }) => {
+export const Form = ({ transactiontypes, units, appointmentLimits }) => {
+    console.log(appointmentLimits);
     const { data, setData, post, reset, errors } = useForm({
         transactionType: "",
         unitSection: [],
@@ -198,7 +199,7 @@ export const Form = ({ transactiontypes, units }) => {
                                 </div>
                             </fieldset>
                             <fieldset
-                                disabled={!data.unitSection}
+                                disabled={!data.transactionType}
                                 className="opacity-100 disabled:opacity-50 transition-opacity"
                             >
                                 <div className="mt-4">
@@ -215,18 +216,14 @@ export const Form = ({ transactiontypes, units }) => {
                                     <DatePicker
                                         id="date"
                                         name="date"
-                                        selected={
-                                            data.date
-                                                ? new Date(data.date)
-                                                : null
-                                        }
+                                        selected={data.date}
                                         onChange={(date) =>
                                             setData(
                                                 "date",
-                                                date.toISOString().split("T")[0]
+                                                date.toLocaleDateString("en-CA")
                                             )
                                         }
-                                        // minDate={new Date()}
+                                        minDate={new Date()}
                                         dateFormat="yyyy-MM-dd"
                                         inline
                                         className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full border border-gray-300 rounded px-3 py-2"
@@ -239,71 +236,105 @@ export const Form = ({ transactiontypes, units }) => {
                                 </div>
                             </fieldset>
                             {/* Time Dropdown - only shows if date is selected */}
+                            {data.date && data.transactionType && (
+                                <div className="mt-4 space-y-2">
+                                    <p className="text-sm text-gray-700 dark:text-white font-medium mb-1">
+                                        Select Time:
+                                    </p>
+                                    {[
+                                        "09:00",
+                                        "10:00",
+                                        "11:00",
+                                        "12:00",
+                                        "13:00",
+                                        "14:00",
+                                        "15:00",
+                                        "16:00",
+                                    ].map((time) => {
+                                        const formattedTime = `${time}:00`;
+                                        const appointmentsToday =
+                                            appointmentLimits?.[data.date] ||
+                                            [];
+
+                                        // Find the slot matching time + transaction_type_id
+                                        const slot = appointmentsToday.find(
+                                            (a) =>
+                                                a.time === formattedTime &&
+                                                a.transactionType ===
+                                                    Number(data.transactionType)
+                                        );
+
+                                        // Define limit per transaction type
+                                        const transactionLimit =
+                                            Number(data.transactionType) === 1
+                                                ? 2
+                                                : 10;
+
+                                        const isFull =
+                                            (slot?.count || 0) >=
+                                            transactionLimit;
+
+                                        return (
+                                            <label
+                                                key={time}
+                                                className="flex items-center space-x-2"
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="time"
+                                                    value={time}
+                                                    disabled={isFull}
+                                                    checked={data.time === time}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "time",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="form-radio text-blue-600"
+                                                />
+                                                <span
+                                                    className={`${
+                                                        isFull
+                                                            ? "text-gray-400 line-through"
+                                                            : "text-gray-700"
+                                                    } dark:text-white`}
+                                                >
+                                                    {new Date(
+                                                        `1970-01-01T${time}:00`
+                                                    ).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                    {isFull && (
+                                                        <span className="text-red-500 ml-2 font-semibold">
+                                                            Fully Booked
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            )}
                             <fieldset
-                                disabled={!data.date}
+                                disabled={!data.time}
                                 className="opacity-100 disabled:opacity-50 transition-opacity"
                             >
-                                <div className="mt-4">
-                                    <div className="flex items-center gap-1">
-                                        <span className="text-sm text-red-600">
-                                            *
-                                        </span>
-                                        <InputLabel
-                                            htmlFor="time"
-                                            value="Time"
-                                        />
-                                    </div>
-                                    <select
-                                        id="time"
-                                        name="time"
-                                        value={data.time}
-                                        onChange={(e) =>
-                                            setData("time", e.target.value)
-                                        }
-                                        className="mt-1 block w-full sm:w-3/4 md:w-1/2 lg:w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        <option value="">
-                                            -- Select Time --
-                                        </option>
-                                        {[
-                                            "09:00",
-                                            "10:00",
-                                            "11:00",
-                                            "12:00",
-                                            "13:00",
-                                            "14:00",
-                                            "15:00",
-                                            "16:00",
-                                        ].map((time) => (
-                                            <option key={time} value={time}>
-                                                {new Date(
-                                                    `1970-01-01T${time}:00`
-                                                ).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError
-                                        message={errors.time}
-                                        className="mt-2"
+                                <div className="mt-10">
+                                    <ReCAPTCHA
+                                        sitekey="6LeJl2MrAAAAAIGoZmahvUhfEzfew-5TzgB2q4zw" // <-- replace with your actual Site Key
+                                        onChange={handleCaptchaChange}
                                     />
                                 </div>
                             </fieldset>
-                            <div className="mt-10">
-                                <ReCAPTCHA
-                                    sitekey="6LeJl2MrAAAAAIGoZmahvUhfEzfew-5TzgB2q4zw" // <-- replace with your actual Site Key
-                                    onChange={handleCaptchaChange}
-                                />
-                            </div>
                         </div>
                         <div>
                             <h1 className="text-3xl font-extrabold text-gray-800 dark:text-white">
                                 Personal Information
                             </h1>
                             <fieldset
-                                disabled={!data.time}
+                                disabled={!data.captcha}
                                 className="opacity-100 disabled:opacity-50 transition-opacity"
                             >
                                 {/* Client's Name */}

@@ -23,6 +23,7 @@ class AppointmentResource extends JsonResource
                 Unit::whereIn('id', $this->unitSection ?? [])->get()
             ),
             'appointmentNumber' => $this->appointmentNumber,
+            'appointmentBy' => new CustomerRatingResource($this->appointmentBy),
             'date' => $this->date,
             'time' => $this->time,
             'fullname' => $this->fullname,

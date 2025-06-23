@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CustomerRatingResource;
+use App\Http\Resources\EmployeeResource;
+use App\Models\Appointment;
 use App\Models\CustomerRating;
 use App\Models\Division;
 use App\Models\Employee;
@@ -37,20 +39,20 @@ class DashboardController extends Controller
         })->when($rating, function ($query) use ($rating) {
             return $query->where('rating', $rating);
         });
+        $appointmentsQuery = Appointment::query();
 
-        $sortField = request("sort_field", "created_at");
-        $sortDirection = request("sort_direction", "desc");
+        if ($dateFrom && $dateTo) {
+            $appointmentsQuery->whereBetween('date', [$dateFrom, $dateTo]);
+        }
 
-        $clientratingdatas = $baseQuery->orderBy($sortField, $sortDirection)->paginate(10)->onEachSide(1);
+        $allAppointments = $appointmentsQuery->get();
 
-        $clientratingdatas->appends(request()->only(['dateFrom', 'dateTo', 'sex', 'status', 'sort_field', 'sort_direction']));
+        // Build a set of appointment numbers from ratings
+        $ratedNumbers = CustomerRating::pluck('appointmentNumber')->filter()->toArray();
 
-        $totalCount = $clientratingdatas->total();
-
-        // Get the count of positions being displayed on the current page
-        $currentPageCount = $clientratingdatas->count();
-        $currentPage = $clientratingdatas->currentPage();
-
+        $completed = $allAppointments->whereIn('appointmentNumber', $ratedNumbers)->count();
+        $noshow = $allAppointments->whereNotIn('appointmentNumber', $ratedNumbers)->whereNotNull('appointmentNumber')->count();
+        
         $excellent = (clone $baseQuery)->where('rating', 'Excellent')->count();
         $veryGood  = (clone $baseQuery)->where('rating', 'Good')->count();
         $Bad       = (clone $baseQuery)->where('rating', 'Bad')->count();
@@ -63,12 +65,12 @@ class DashboardController extends Controller
             ->count();
 
 
-
         $female = (clone $baseQuery)
             ->where('sex', 'Female')
             ->select('clientName', 'date')
             ->distinct()
-            ->count('clientName');
+            ->get()
+            ->count();
 
         // If the request is AJAX (like from axios), return JSON
         if (request()->wantsJson()) {
@@ -79,44 +81,23 @@ class DashboardController extends Controller
                 'veryBad'   => $veryBad,
                 'male'   => $male,
                 'female'   => $female,
+                'completed' => $completed,
+                'noshow' => $noshow,
             ]);
         }
 
         // Otherwise return the Inertia page
         return inertia("Dashboard", [
-            "clientratingdatas" => CustomerRatingResource::collection($clientratingdatas),
             'excellent' => $excellent,
             'veryGood'  => $veryGood,
             'Bad'       => $Bad,
             'veryBad'   => $veryBad,
             'male'       => $male,
             'female'   => $female,
-            'totalCount' => $totalCount,
-            'currentPageCount' => $currentPageCount,
-            'currentPage' => $currentPage,
-
+            'completed' => $completed,
+            'noshow' => $noshow,
         ]);
     }
-
-    public function quarterlyRatings()
-    {
-        $quarterly = CustomerRating::query()
-            ->selectRaw("
-    CONCAT('Q', QUARTER(date), ' ', YEAR(date)) as quarter,
-    SUM(CASE WHEN rating = 'Excellent' THEN 1 ELSE 0 END) as excellent,
-    SUM(CASE WHEN rating = 'Good' THEN 1 ELSE 0 END) as good,
-    SUM(CASE WHEN rating = 'Bad' THEN 1 ELSE 0 END) as bad,
-    SUM(CASE WHEN rating = 'Very Bad' THEN 1 ELSE 0 END) as very_bad
-")
-            ->groupByRaw("YEAR(date), QUARTER(date)")
-            ->orderByRaw("YEAR(date), QUARTER(date)")
-            ->get();
-
-
-        return response()->json($quarterly);
-    }
-
-
 
     public function clientindex()
     {
@@ -129,10 +110,9 @@ class DashboardController extends Controller
 
         $divisions = Division::orderBy('division_name', 'asc')->get();
         $sections = Section::orderBy('section_name', 'asc')->get();
-        $transactiontypes = TransactionType::orderBy('id', 'asc')->get();
+        $transactiontypes = TransactionType::orderBy('transaction_name', 'asc')->get();
         $employees = Employee::orderBy('fullName', 'asc')->get();
         $units = Unit::orderBy('unit_name', 'asc')->get();
-
 
 
         return Inertia::render('Client', [
@@ -147,9 +127,5 @@ class DashboardController extends Controller
             'laravelVersion' => \Illuminate\Foundation\Application::VERSION,
             'phpVersion' => PHP_VERSION,
         ]);
-    }
-
-    public function landingpage(){
-        return Inertia::render('LandingPage');
     }
 }

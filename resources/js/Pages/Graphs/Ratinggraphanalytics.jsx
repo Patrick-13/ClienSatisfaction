@@ -8,13 +8,18 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import Modal from "@/Components/Modal";
 import Ratingdatatable from "@/Modal/Ratingdatatable";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-ChartJS.register(ChartDataLabels);
 
-// Register bar chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip,
+    Legend,
+    ChartDataLabels
+);
 
 export default function Ratinggraphanalytics({
     auth,
@@ -29,7 +34,7 @@ export default function Ratinggraphanalytics({
     const total = excellent + veryGood + Bad + veryBad;
 
     const data = {
-        labels: ["Excellent", "Good", "Bad", "Very Bad"],
+        labels: ["😊 Excellent", "🙂 Good", "😟 Bad", "😠 Very Bad"],
         datasets: [
             {
                 label: "Ratings Distribution",
@@ -41,26 +46,28 @@ export default function Ratinggraphanalytics({
     };
 
     const options = {
+        indexAxis: "y", // Makes the bars horizontal
         responsive: true,
         plugins: {
             legend: {
-                position: "top",
+                display: false,
             },
             datalabels: {
-                anchor: "center", // Center inside the bar
-                align: "center", // Align text center
+                anchor: "start",
+                align: "end",
                 formatter: (value) => {
                     const percentage = ((value / total) * 100).toFixed(1);
                     return `${percentage}%`;
                 },
-                color: "#fff", // White text for contrast inside bars
+
+                color: "#fff",
                 font: {
                     weight: "bold",
                 },
             },
         },
         scales: {
-            y: {
+            x: {
                 beginAtZero: true,
                 ticks: {
                     precision: 0,
@@ -79,10 +86,12 @@ export default function Ratinggraphanalytics({
 
     return (
         <div className="w-full px-6 mt-6">
-            <h2 className="text-lg font-semibold text-center mb-4">Ratings</h2>
+            <h2 className="text-lg font-semibold text-center mb-4 text-white py-2 px-4 rounded-full bg-gradient-to-r from-green-500 via-blue-500 via-red-500 to-orange-500">
+                Ratings
+            </h2>
+
             <Bar data={data} options={options} />
 
-            {/* ✅ Conditional rendering of modal */}
             <Modal
                 show={showModal}
                 maxWidth="4xl"
